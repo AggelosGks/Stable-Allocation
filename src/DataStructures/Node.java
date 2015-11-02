@@ -2,10 +2,12 @@ package DataStructures;
 
 public class Node {
 	
-	private final int id;
+	private static int share=0;
+	public final int id;
 	
-	public Node(int id){
-		this.id=id;
+	public Node(){
+		share++;
+		this.id=share;
 	}
 
 }
