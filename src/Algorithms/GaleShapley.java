@@ -1,16 +1,51 @@
 package Algorithms;
 
+import java.util.ArrayList;
+
 import DataStructures.BipartiteGraph;
+import DataStructures.JobNode;
 
 public class GaleShapley {
-	private boolean[] jobs_matched;//true if job is fully assigned false otherwise
-	private boolean[] machines_matched;
-	private int N,V;//number of vertices on each set
+	private ArrayList<JobNode> jobs_unassigned;
+	private final int N;
+	private final int V;
+	BipartiteGraph graph;
 	
 	public GaleShapley(BipartiteGraph graph){
+		this.graph=graph;
+		this.jobs_unassigned=graph.jobs;
 		this.N=graph.jobs.size();
 		this.V=graph.machines.size();
-		this.jobs_matched=new boolean[N];
-		this.machines_matched=new boolean[V];
 	}
+	
+	public void execute(){
+		while(hasMoreUnassigned()){
+			JobNode job=extractUnassigned();
+			double amount=job.computeLeftTime();
+			
+		}
+	}
+	
+	public JobNode extractUnassigned(){
+		JobNode job=null;
+		for(JobNode j : jobs_unassigned){
+			if(!j.isFullyAssigned()){
+				job=j;
+				break;
+			}
+		}
+		return job;
+	}
+	
+	public boolean hasMoreUnassigned(){
+		boolean hasMore=false;
+		for(JobNode j : jobs_unassigned){
+			if(!j.isFullyAssigned()){
+				hasMore=true;
+				break;
+			}
+		}
+		return hasMore;
+	}
+	
 }
