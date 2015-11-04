@@ -3,31 +3,38 @@ package DataStructures;
 import java.util.ArrayList;
 
 public class JobNode extends Node{
-	
 	private static final ArrayList<JobNode> jobs=new ArrayList<JobNode>();//total job population
-	private MachineNode assigned;//pointer to current assignment
+
+
 	public final double proc_time;//time of job
+	private int time_consumed;//current amount of time
 	private ArrayList<MachineNode> pref;//list with preferences
+	private int pref_pointer;
 	
 	public JobNode(double proc_time) {
 		super();
 		this.proc_time=proc_time;
+		this.time_consumed=0;
 		this.pref=new ArrayList<MachineNode>();//initialize pref list
 		jobs.add(this);
+		this.pref_pointer=0;//pointer start at first choice
 	}
 	
-	/**
-	 * Makes a logical comparison according to preference list between two machine nodes
-	 * @return true if node argument is preferable tha current
-	 */
-	public boolean isPreferable(MachineNode candidate){
-		boolean prefer=false;
-		int current_index=this.pref.indexOf(assigned);
-		int candidate_index=this.pref.indexOf(candidate);
-		if(current_index>candidate_index){//candidate is prefered than current
-			prefer=true;
-		}
-		return prefer;
+	
+	public int getTime_consumed() {
+		return time_consumed;
+	}
+
+	public void setTime_consumed(int time_consumed) {
+		this.time_consumed = time_consumed;
+	}
+
+	public ArrayList<MachineNode> getPref() {
+		return pref;
+	}
+
+	public void setPref(ArrayList<MachineNode> pref) {
+		this.pref = pref;
 	}
 	
 	public static void createDummyJob(){
@@ -43,10 +50,34 @@ public class JobNode extends Node{
 		return jobs.get(size-1);
 	}
 	
-	public void assignToMachine(MachineNode m){
-		this.assigned=m;
+	/**
+	 * Return the optimal choice of a job for proposal
+	 * @return
+	 */
+	public MachineNode getFirstChoice(){
+		return this.pref.get(pref_pointer);
+		
+	}
+	
+	/**
+	 * Returns the left amount of time for a job instance
+	 * @return 
+	 */
+	public double computeLeftTime(){
+		return proc_time-time_consumed;
 	}
 
+	/**
+	 * Checks if job is fully assigne
+	 * @return true if fully assigned, false otherwise.
+	 */
+	public boolean isFullyAssigned(){
+		if(time_consumed==proc_time){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	
 }
