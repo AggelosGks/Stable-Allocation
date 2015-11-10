@@ -20,10 +20,7 @@ public class JobNode extends Node{
 		this.pref_pointer=0;//pointer start at first choice
 	}
 	
-	
-	public int getTime_consumed() {
-		return time_consumed;
-	}
+
 
 	public void setTime_consumed(int time_consumed) {
 		this.time_consumed = time_consumed;
@@ -33,10 +30,6 @@ public class JobNode extends Node{
 		return pref;
 	}
 
-	public void setPref(ArrayList<MachineNode> pref) {
-		this.pref = pref;
-	}
-	
 	public static void createDummyJob(){
 		new JobNode(Double.MAX_VALUE);
 	}
@@ -51,12 +44,22 @@ public class JobNode extends Node{
 	}
 	
 	/**
-	 * Return the optimal choice of a job for proposal
+	 * Return the optimal choice of a job for proposal.
+	 * First a comparison is 
 	 * @return
 	 */
-	public MachineNode getFirstChoice(){
-		return this.pref.get(pref_pointer);
-		
+	public MachineNode getFirstChoiceForProposal(){
+		MachineNode machine=null;
+		boolean step_down=true;
+		while(step_down){
+			machine=pref.get(pref_pointer);
+			if(Edge.getEdge(this, machine).isFull()||(!machine.isPreferable(this))){
+				pref_pointer++;//step down to list
+			}else{
+				step_down=false;
+			}
+		}
+		return machine;
 	}
 	
 	/**
@@ -78,6 +81,8 @@ public class JobNode extends Node{
 			return false;
 		}
 	}
+	
+	
 	
 	
 }
