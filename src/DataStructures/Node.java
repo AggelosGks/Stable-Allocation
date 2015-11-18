@@ -6,8 +6,8 @@ public class Node {
 	public final int id;
 	
 	public Node(){
-		share++;
 		this.id=share;
+		share++;
 	}
 
 }

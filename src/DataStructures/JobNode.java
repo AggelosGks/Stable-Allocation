@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class JobNode extends Node{
 	private static final ArrayList<JobNode> jobs=new ArrayList<JobNode>();//total job population
-
+	private static JobNode dummy;
 
 	public final double proc_time;//time of job
 	private int time_consumed;//current amount of time
@@ -16,10 +16,38 @@ public class JobNode extends Node{
 		this.proc_time=proc_time;
 		this.time_consumed=0;
 		this.pref=new ArrayList<MachineNode>();//initialize pref list
-		jobs.add(this);
+		if(!(this.proc_time==Integer.MAX_VALUE)){
+			jobs.add(this);
+		}else{
+			dummy=this;
+		}
 		this.pref_pointer=0;//pointer start at first choice
 	}
 	
+
+
+	@Override
+	public String toString() {
+		String x="";
+		for(MachineNode machine : pref){
+			x=x+" "+Integer.toString(machine.id);
+		}
+		return "JobNode [proc_time=" + proc_time + ", time_consumed=" + time_consumed + ", pref=" + x
+				+ ", pref_pointer=" + pref_pointer + "]";
+	}
+
+
+
+	public void setPref(ArrayList<MachineNode> pref) {
+		this.pref = pref;
+	}
+
+
+
+	public static JobNode getDummy() {
+		return dummy;
+	}
+
 
 
 	public void setTime_consumed(int time_consumed) {
@@ -31,17 +59,13 @@ public class JobNode extends Node{
 	}
 
 	public static void createDummyJob(){
-		new JobNode(Double.MAX_VALUE);
+		new JobNode(Integer.MAX_VALUE);
 	}
 
 	public static ArrayList<JobNode> getJobs() {
 		return jobs;
 	}
 
-	public static JobNode getDummyJob(){
-		int size=jobs.size();
-		return jobs.get(size-1);
-	}
 	
 	/**
 	 * Return the optimal choice of a job for proposal.

@@ -3,7 +3,7 @@ package DataStructures;
 import java.util.ArrayList;
 
 public class MachineNode extends Node{
-	
+	private static MachineNode dummy;
 	//static fields
 	private static final ArrayList<MachineNode> machines=new ArrayList<MachineNode>();//total machine population
 	//instance fields
@@ -15,14 +15,38 @@ public class MachineNode extends Node{
 	public MachineNode(double upper_cap) {
 		super();
 		this.upper_cap=upper_cap;
-		machines.add(this);
+		if(!(this.upper_cap==Integer.MAX_VALUE)){
+			machines.add(this);
+		}else{
+			dummy=this;
+		}
 		this.pref=new ArrayList<JobNode>();//initialize pref list
-		this.pref_pointer=JobNode.getJobs().size();//pointer starts at least prefered choice
+		this.pref_pointer=JobNode.getJobs().size()-1;//pointer starts at least prefered choice
 	}
 
 	
+	@Override
+	public String toString() {
+		String x="";
+		for(JobNode job : pref){
+			x=x+" "+job.id;
+		}
+		return "MachineNode [pref=" + x + ", upper_cap=" + upper_cap + ", pref_pointer=" + pref_pointer + "]";
+	}
+
+
+	public void setPref(ArrayList<JobNode> pref) {
+		this.pref = pref;
+	}
+
+
+	public static MachineNode getDummy() {
+		return dummy;
+	}
+
+
 	public static void createDummyMachine(){
-		new MachineNode(Double.MAX_VALUE);
+		new MachineNode(Integer.MAX_VALUE);
 	}
 	
 	public static ArrayList<MachineNode> getMachines() {
