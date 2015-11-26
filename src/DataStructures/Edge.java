@@ -75,14 +75,28 @@ public class Edge {
 	 * 
 	 */
 	public static void createAllEdges(){
-		for(JobNode job : JobNode.getJobs()){
+		for(JobNode job : JobNode.getJobs()){//iterate job nodes
 			jobs_machines.put(job.id,new ArrayList<Edge>());
 			for(MachineNode machine : MachineNode.getMachines()){
-				jobs_machines.get(job.id).add(new Edge(job,machine));
+				jobs_machines.get(job.id).add(new Edge(job,machine));//add each edge
 			}
+			jobs_machines.get(job.id).add(new Edge(job,MachineNode.getDummy()));//add edge with dummy machine
 		}
+		JobNode dummy=JobNode.getDummy();//add edges for dummy job too
+		jobs_machines.put(dummy.id,new ArrayList<Edge>());
+		for(MachineNode machine : MachineNode.getMachines()){
+			jobs_machines.get(dummy.id).add(new Edge(dummy,machine));//add each edge
+		}
+		jobs_machines.get(dummy.id).add(new Edge(dummy,MachineNode.getDummy()));//add each edge
 	}
 	
+	@Override
+	public String toString() {
+		return "Edge [machine=" + machine.id + ", job=" + job.id + ", max_time=" + max_time + ", current_time=" + current_time
+				+ "]";
+	}
+
+
 	/**
 	 * Retrieves the specific edge connecting the two parameters.
 	 * @param j the job

@@ -2,6 +2,8 @@ package Algorithms;
 
 import java.util.ArrayList;
 
+import DataStructures.BipartiteGraph;
+import DataStructures.Edge;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 
@@ -18,10 +20,12 @@ public class Instance {
 		this.min_time=min;
 	}
 	
-	public void createInstance(){
+	public BipartiteGraph createInstance(){
 		createNodes();
 		assignPreferencesJobs();
 		assignPreferencesMachines();
+		Edge.createAllEdges();
+		return new BipartiteGraph();
 	}
 	
 	public static int randomWithRange(int min, int max)
@@ -33,9 +37,7 @@ public class Instance {
 	public void createNodes(){
 		int max_value=0;
 		JobNode.createDummyJob();
-		System.out.println(JobNode.getDummy().id);
 		MachineNode.createDummyMachine();
-		System.out.println(MachineNode.getDummy().id);
 		for(int i=0; i<j; i++){
 			int proc_time=randomWithRange(min_time,max_time);
 			new JobNode(proc_time);

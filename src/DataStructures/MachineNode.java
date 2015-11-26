@@ -60,7 +60,7 @@ public class MachineNode extends Node{
 	 * @param job the job node to be compared
 	 * @return true if job is preferable, false otherwise.
 	 */
-	public boolean isPreferable(JobNode job){
+	public boolean prefersAccRej(JobNode job){
 		boolean isprefered=false;
 		int index_candidate=pref.indexOf(job);
 		if(index_candidate<pref_pointer){
@@ -68,5 +68,41 @@ public class MachineNode extends Node{
 		}
 		return isprefered;
 	}
+	
+	/**
+	 * Return the least prefered job
+	 * @return least_pref the least prefered job.
+	 */
+	public JobNode getLeastPrefered(){
+		JobNode least_pref=pref.get(pref_pointer);
+		return least_pref;
+	}
+	
+	/**
+	 * This method is responsible for updating the point on the preference list
+	 * for a machine. After an acceptance has occured and no amount of job is assigned
+	 * to the least prefered job, we increase the pointer to the index of the 
+	 * job that proposed last.
+	 * @param job the job that proposed
+	 */
+	public void refreshPointerIndex(JobNode job){
+		int index=pref.indexOf(job);
+		pref_pointer=index;
+	}
+	
+	public boolean rejectTime(double amount){
+		boolean remove=false;
+		JobNode job_reject=this.getLeastPrefered();
+		double current_time=Edge.getEdge(job_reject, this).getCurrent_time();
+		Edge.getEdge(job_reject,this).setCurrent_time(current_time-amount);
+		if(Edge.getEdge(job_reject, this).getCurrent_time()==0){
+			remove=true;
+		}else{
+			remove=false;
+		}
+		return remove;
+	}
+	
+	
 
 }
