@@ -22,6 +22,8 @@ public class Matching {
 	}
 	
 	public  void printMatching() {
+		System.out.println(" ");
+		System.out.println("-----------------");
 		for(Map.Entry<Node,ArrayList<Edge>> entry : match_edges.entrySet()) {
 			Node node = entry.getKey();
 			ArrayList<Edge> edges = entry.getValue();
@@ -30,6 +32,7 @@ public class Matching {
 				System.out.println(e.toString());
 			}  
 		}
+		System.out.println("-----------------");
 	}
 	
 	public void removeEdgeFromMatch(Node source, Edge edge){

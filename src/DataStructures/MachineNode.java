@@ -21,7 +21,7 @@ public class MachineNode extends Node{
 			dummy=this;
 		}
 		this.pref=new ArrayList<JobNode>();//initialize pref list
-		this.pref_pointer=JobNode.getJobs().size()-1;//pointer starts at least prefered choice
+		this.pref_pointer=JobNode.getJobs().size();//pointer starts at least prefered choice
 	}
 
 	
@@ -31,7 +31,7 @@ public class MachineNode extends Node{
 		for(JobNode job : pref){
 			x=x+" "+job.id;
 		}
-		return "MachineNode [pref=" + x + ", upper_cap=" + upper_cap + ", pref_pointer=" + pref_pointer + "]";
+		return "MachineNode [ Id: "+this.id+",pref=" + x + ", upper_cap=" + upper_cap + ", pref_pointer=" + pref_pointer + "]";
 	}
 
 
@@ -97,6 +97,7 @@ public class MachineNode extends Node{
 		Edge.getEdge(job_reject,this).setCurrent_time(current_time-amount);
 		if(Edge.getEdge(job_reject, this).getCurrent_time()==0){
 			remove=true;
+			System.out.println("Ediwksa");
 		}else{
 			remove=false;
 		}

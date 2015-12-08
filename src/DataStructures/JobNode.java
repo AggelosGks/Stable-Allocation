@@ -32,7 +32,7 @@ public class JobNode extends Node{
 		for(MachineNode machine : pref){
 			x=x+" "+Integer.toString(machine.id);
 		}
-		return "JobNode [proc_time=" + proc_time + ", time_consumed=" + time_consumed + ", pref=" + x
+		return "JobNode [ Id: "+this.id+", proc_time=" + proc_time + ", time_consumed=" + time_consumed + ", pref=" + x
 				+ ", pref_pointer=" + pref_pointer + "]";
 	}
 
@@ -71,6 +71,12 @@ public class JobNode extends Node{
 		return machine;
 	}
 	
+	public int getTime_consumed() {
+		return time_consumed;
+	}
+
+
+
 	/**
 	 * Returns the left amount of time for a job instance
 	 * @return 
@@ -93,13 +99,19 @@ public class JobNode extends Node{
 	
 	public boolean propose(double amount,MachineNode machine){
 		boolean accepts=false;
-		if(machine.prefersAccRej(this)&&amount>0){
-			accepts=true;
-		}else{
-			accepts=false;
+		double time=Edge.getEdge(this,machine).getCurrent_time();
+		if(!(time==Edge.getEdge(this, machine).max_time)){//ensure that arc has remaining capacity
+			if(machine.prefersAccRej(this)&&amount>0){//if machine accepts
+				accepts=true;
+			}else{
+				accepts=false;
+			}
 		}
 		return accepts;
 	}
 	
+	public void refreshPointerIndex(){
+		this.pref_pointer++;
+	}
 	
 }

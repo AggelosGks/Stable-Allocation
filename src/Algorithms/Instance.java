@@ -36,27 +36,32 @@ public class Instance {
 	
 	public void createNodes(){
 		int max_value=0;
+		int total_proc_time=0;
+		//create dummy nodes
 		JobNode.createDummyJob();
 		MachineNode.createDummyMachine();
 		for(int i=0; i<j; i++){
 			int proc_time=randomWithRange(min_time,max_time);
 			new JobNode(proc_time);
+			total_proc_time=total_proc_time+proc_time;
 			if(proc_time>max_value){
 				max_value=proc_time;
 			}
 		}
 		ArrayList<Integer> capacities=new ArrayList<Integer>();
 		boolean control=true;
+		int y=0;
 		while(control){
 			capacities.clear();
 			int sum=0;
 			for(int i=0; i<m; i++){
-				int capacity=randomWithRange(min_time,max_time);
+				int capacity=randomWithRange(max_time-min_time,max_time+min_time);
 				capacities.add(capacity);
 				sum=sum+capacity;
 			}
-			if(sum>max_time){
+			if(sum==total_proc_time&&sum>max_value){
 				control=false;
+				y=sum;
 			}
 		}
 		for(Integer capacity : capacities){
@@ -88,7 +93,7 @@ public class Instance {
 		for(MachineNode machine : MachineNode.getMachines()){
 			ArrayList<JobNode> abandoned=new ArrayList<JobNode>();
 			ArrayList<JobNode> preferences=new ArrayList<JobNode>();
-			for(int i=0; i<j-1; i++){
+			for(int i=0; i<j; i++){
 				int number=randomWithRange(0,j-1);
 				JobNode job=jobs.get(number);
 				if(abandoned.contains(job)){
@@ -106,7 +111,7 @@ public class Instance {
 		for(JobNode j : JobNode.getJobs()){
 			System.out.println(j.toString());
 		}
-		System.out.print("-------------------");
+		System.out.println("-------------------------------");
 		for(MachineNode m : MachineNode.getMachines()){
 			System.out.println(m.toString());
 		}
