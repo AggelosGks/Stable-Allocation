@@ -8,6 +8,7 @@ import DataStructures.Edge;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
+import DataStructures.Node;
 
 public class GaleShapley {
 	private ArrayList<JobNode> jobs_unassigned;
@@ -94,17 +95,26 @@ public class GaleShapley {
 			double pro_amount=Math.min(time_left, available);//compute minimum amount that can flow through arc
 			if(job.propose(pro_amount, proposal)){//acceptance occurs
 				//reject pro_amount of time
-				JobNode least_prefed=proposal.getLeastPrefered();//get the one for rejection
-				if(proposal.rejectTime(pro_amount)){//if arc has decreased to zero after rejection
-					match.removeEdgeFromMatch(least_prefed, Edge.getEdge(least_prefed,proposal));//remove edge from matching
-					proposal.refreshPointerIndex(job);//update pointer upwards
-				}
-				if(!(least_prefed.isDummy())&&jobs_assigned.contains(least_prefed)){//if the rejected node was fully assigned
-					jobs_assigned.remove(least_prefed);//remove from asssigned
-					jobs_unassigned.add(least_prefed);//add to unassigned
-				}
+				double remain=0;
+				do{
+					System.out.println("O job "+job.id+" ston: "+proposal.id+" amount: "+pro_amount);
+					for(int i=0; i<Integer.MAX_VALUE; i++){
+						String x=" ";
+					}
+					System.out.println(remain);
+					remain=proposal.rejectTime(pro_amount,match);
+					System.out.println(pro_amount);
+					JobNode least_prefed=proposal.getLeastPrefered();//get the one for rejection
+					if(!(least_prefed.isDummy())&&jobs_assigned.contains(least_prefed)){//if the rejected node was fully assigned
+						jobs_assigned.remove(least_prefed);//remove from asssigned
+						jobs_unassigned.add(least_prefed);//add to unassigned
+					}
+					if(remain<=0){
+						proposal.refreshPointerIndex(match);
+					}
+					match.printMatching();
+				}while(remain<0);
 				job.setTime_consumed(job.getTime_consumed()+(int)pro_amount);
-				
 				Edge.getEdge(job, proposal).setCurrent_time(pro_amount);//set amount of time for new arc
 				match.addEdgeToMatch(job, Edge.getEdge(job, proposal));//add arc to mathcing
 				if(job.isFullyAssigned()){
@@ -117,6 +127,35 @@ public class GaleShapley {
 			match.printMatching();
 			
 			
+		}
+	}
+	
+	public void execute2(){
+		createInitialMathcing();
+		while(hasMoreUnassigned()){
+			JobNode job=extractUnassigned();//extract first unassigned
+			double time_left=job.computeLeftTime();//compute left time
+			MachineNode proposal=job.getFirstChoiceForProposal();//compute machine for proposal
+			double available=Edge.getEdge(job, proposal).computeAvailableTime();//available amount of time on arc
+			double pro_amount=Math.min(time_left, available);//compute minimum amount that can flow through arc
+			if(job.propose(pro_amount, proposal)){//acceptance occurs
+				ArrayList<Node> rejected=proposal.rejectTime2(pro_amount, match);
+				for(Node rej : rejected){
+					if(!(rej.isDummy())&&jobs_assigned.contains(rej)){//if the rejected node was fully assigned
+						jobs_assigned.remove(rej);//remove from asssigned
+						jobs_unassigned.add((JobNode)rej);//add to unassigned
+					}
+				}
+				job.setTime_consumed(job.getTime_consumed()+(int)pro_amount);
+				Edge.getEdge(job, proposal).setCurrent_time(pro_amount);//set amount of time for new arc
+				match.addEdgeToMatch(job, Edge.getEdge(job, proposal));//add arc to mathcing
+				if(job.isFullyAssigned()){
+					removeJob(job);
+					jobs_assigned.add(job);
+				}
+			}else{//rejection occurs
+				job.refreshPointerIndex();
+			}
 		}
 	}
 }

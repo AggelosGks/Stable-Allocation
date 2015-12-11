@@ -9,12 +9,12 @@ import DataStructures.MachineNode;
 
 public class Application {
 	public static void main(String args[]){
-		Instance i=new Instance(3,3,2,10);
+		Instance i=new Instance(3,3,10,5);
 		BipartiteGraph graph=i.createInstance();
+		GaleShapley algorithm=new GaleShapley(graph);
 		i.testInstanceIntegration();
-		GaleShapley algo=new GaleShapley(graph);
-		algo.execute();
-		
+		algorithm.execute2();
+		algorithm.getMatch().printMatching();
 	}
 	
 }

@@ -1,6 +1,7 @@
 package Algorithms;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import DataStructures.BipartiteGraph;
 import DataStructures.Edge;
@@ -40,31 +41,28 @@ public class Instance {
 		//create dummy nodes
 		JobNode.createDummyJob();
 		MachineNode.createDummyMachine();
-		for(int i=0; i<j; i++){
-			int proc_time=randomWithRange(min_time,max_time);
-			new JobNode(proc_time);
-			total_proc_time=total_proc_time+proc_time;
-			if(proc_time>max_value){
-				max_value=proc_time;
-			}
-		}
-		ArrayList<Integer> capacities=new ArrayList<Integer>();
+		ArrayList<Integer> data=new ArrayList<Integer>();//save times and capacities
 		boolean control=true;
-		int y=0;
+		//generate j integers 
 		while(control){
-			capacities.clear();
-			int sum=0;
-			for(int i=0; i<m; i++){
-				int capacity=randomWithRange(max_time-min_time,max_time+min_time);
-				capacities.add(capacity);
-				sum=sum+capacity;
+			for(int i=0; i<j; i++){
+				int proc_time=randomWithRange(min_time,max_time);
+				data.add(proc_time);
+				total_proc_time=total_proc_time+proc_time;
+				if(proc_time>max_value){
+					max_value=proc_time;//save longest time
+				}
 			}
-			if(sum==total_proc_time&&sum>max_value){
+			if(total_proc_time>m){
 				control=false;
-				y=sum;
+				for(int time : data){
+					new JobNode(time);
+				}
 			}
 		}
-		for(Integer capacity : capacities){
+		data.clear();//clear list to save capacities
+		int[] result=sumNumbers(total_proc_time,m);
+		for(Integer capacity : result){
 			new MachineNode(capacity);
 		}
 	}
@@ -115,5 +113,34 @@ public class Instance {
 		for(MachineNode m : MachineNode.getMachines()){
 			System.out.println(m.toString());
 		}
+	}
+	
+	public static int[] sumNumbers(int number, int parts) {
+	    int[] result = new int[parts];
+	    int sum = 0;
+	    Random random = new Random();
+	    for (int i = 1; i < result.length; i++) {
+	        // here is the uneffecient part:
+	        int rand = random.nextInt(number);
+	        if (sum + rand < number) {
+	            result[i] = rand;
+	            sum += rand;
+	        } else {
+	            i--;
+	        }
+	    }
+	    result[0] = number - sum;
+	    for(int i=0; i<result.length; i++){
+	    	if(result[i]==0||result[i]==1){
+	    		result[i]=result[i]+2;
+	    		for(int j=0; j<result.length; j++){
+	    			if(result[j]!=0&&result[j]!=1&&result[j]!=2){
+	    				result[j]=result[j]-2;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    }
+	    return result;
 	}
 }

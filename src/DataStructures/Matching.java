@@ -12,6 +12,10 @@ public class Matching {
 		 this.match_edges=new HashMap<Node,ArrayList<Edge>>();
 	}
 	
+	public HashMap<Node, ArrayList<Edge>> getMatch_edges() {
+		return match_edges;
+	}
+
 	public void addEdgeToMatch(Node source, Edge edge){
 		if(match_edges.get(source)==null){
 			match_edges.put(source,new ArrayList<Edge>());
