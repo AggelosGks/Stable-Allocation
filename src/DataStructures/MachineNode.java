@@ -85,23 +85,25 @@ public class MachineNode extends Node{
 	 * job that proposed last.
 	 * @param job the job that proposed
 	 */
-	public void refreshPointerIndex(Matching match){
+	public void refreshPointerIndex(Matching match,JobNode proposed){
+		
 		JobNode lest_pref=this.getLeastPrefered();//get current least prefered
 		Edge edge=Edge.getEdge(lest_pref, this);//extract edge
-		if(!match.getMatch_edges().get(lest_pref).contains(edge)){//if not exists in matching 
+		if(!match.getMatch_edges().get(lest_pref).contains(edge)){//if not exists in matching
 			int index=this.pref.indexOf(lest_pref);
-			for(int i=index; i<=0; i--){
+			for(int i=index; i>=0; i--){
 				JobNode next=this.pref.get(i);
 				if(match.getMatch_edges().get(next)!=null){
 					if(match.getMatch_edges().get(next).contains(Edge.getEdge(next, this))){
 						this.pref_pointer=this.pref.indexOf(next);
-						
 						break;
 					}
 				}
 			}
+			if(this.getLeastPrefered()==lest_pref){
+				this.pref_pointer=this.pref.indexOf(proposed);
+			}
 		}
-		
 	}
 	
 	public double rejectTime(double amount,Matching match){
@@ -121,30 +123,32 @@ public class MachineNode extends Node{
 		return remain;
 	}
 	
-	public ArrayList<Node> rejectTime2(double amount,Matching match){
+	public ArrayList<Node> rejectTime2(double amount,Matching match,JobNode proposed){
 		ArrayList<Node> rejected=new ArrayList<Node>();
 		JobNode lp=this.getLeastPrefered();
 		double time=Edge.getEdge(lp,this).getCurrent_time();
 		if(time>amount){
 			Edge.getEdge(lp,this).setCurrent_time(time-amount);
+			lp.setTime_consumed(lp.getTime_consumed()-(int)amount);
 			rejected.add(lp);
 		}else if(time==amount){
 			Edge.getEdge(lp,this).setCurrent_time(0);
 			match.removeEdgeFromMatch(lp, Edge.getEdge(lp,this));//remove edge from matching
+			lp.setTime_consumed(lp.getTime_consumed()-(int)amount);
 			rejected.add(lp);
-			refreshPointerIndex(match);//least prefered job changes
+			refreshPointerIndex(match,proposed);//least prefered job changes
 		}else{
 			double rejection=amount;//total amount of rejection
 			while(rejection>0){//until reject amount decrease to zero
-				System.out.println("Rejection amount= "+rejection);
 				lp=this.getLeastPrefered();//get least prefered
-				System.out.println("Least prefered: "+lp.id);
 				time=Edge.getEdge(lp,this).getCurrent_time();
-				double assign=Math.max(0,time-rejection);
+				int true_rej=(int) Math.min((Double)time, rejection);//assign the minimum value of rejection and available
+				lp.setTime_consumed(lp.getTime_consumed()-true_rej);
+				double assign=Math.max(0,time-rejection);//if edge is empty assign 0 value not negative
 				Edge.getEdge(lp,this).setCurrent_time(assign);
-				if(assign==0){
+				if(assign==0){//if decreased to zero 
 					match.removeEdgeFromMatch(lp, Edge.getEdge(lp,this));//remove edge from matching
-					refreshPointerIndex(match);//least prefered job changes
+					refreshPointerIndex(match,proposed);//least prefered job changes
 				}
 				rejected.add(lp);
 				rejection=Math.min(0, time-rejection);

@@ -25,6 +25,17 @@ public class Matching {
 		}
 	}
 	
+	public boolean containsEdge(Edge e){
+		boolean contains=false;
+		JobNode job=(JobNode)e.getJob();
+		if(this.match_edges.get(job)!=null){
+			if(this.match_edges.get(job).contains(e)){
+				contains=true;
+			}
+		}
+		return contains;
+	}
+	
 	public  void printMatching() {
 		System.out.println(" ");
 		System.out.println("-----------------");

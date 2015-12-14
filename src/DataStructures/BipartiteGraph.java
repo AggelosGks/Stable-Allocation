@@ -1,7 +1,6 @@
 package DataStructures;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 public class BipartiteGraph {
 	public final ArrayList<JobNode> jobs;
