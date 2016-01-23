@@ -1,10 +1,12 @@
 package DataStructures;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MachineNode extends Node{
 	private static MachineNode dummy;
 	//static fields
+	private static boolean control_pref;
 	private static final ArrayList<MachineNode> machines=new ArrayList<MachineNode>();//total machine population
 	//instance fields
 	private ArrayList<JobNode> pref;//pref list
@@ -78,66 +80,29 @@ public class MachineNode extends Node{
 		return least_pref;
 	}
 	
-	/**
-	 * This method is responsible for updating the point on the preference list
-	 * for a machine. After an acceptance has occured and no amount of job is assigned
-	 * to the least prefered job, we increase the pointer to the index of the 
-	 * job that proposed last.
-	 * @param job the job that proposed
-	 */
-	public void refreshPointerIndex(Matching match,JobNode proposed){
-		
-		JobNode lest_pref=this.getLeastPrefered();//get current least prefered
-		Edge edge=Edge.getEdge(lest_pref, this);//extract edge
-		if(!match.getMatch_edges().get(lest_pref).contains(edge)){//if not exists in matching
-			int index=this.pref.indexOf(lest_pref);
-			for(int i=index; i>=0; i--){
-				JobNode next=this.pref.get(i);
-				if(match.getMatch_edges().get(next)!=null){
-					if(match.getMatch_edges().get(next).contains(Edge.getEdge(next, this))){
-						this.pref_pointer=this.pref.indexOf(next);
-						break;
-					}
-				}
-			}
-			if(this.getLeastPrefered()==lest_pref){
-				this.pref_pointer=this.pref.indexOf(proposed);
-			}
-		}
-	}
 	
-	public double rejectTime(double amount,Matching match){
-		double remain=0;
-		JobNode job_reject=this.getLeastPrefered();
-		double current_time=Edge.getEdge(job_reject, this).getCurrent_time();
-		if(current_time>amount){
-			Edge.getEdge(job_reject,this).setCurrent_time(current_time-amount);
-			remain=current_time-amount;
-		}else{
-			Edge.getEdge(job_reject,this).setCurrent_time(0);
-			amount=Math.abs(current_time-amount);
-			remain=current_time-amount;
-			match.removeEdgeFromMatch(job_reject, Edge.getEdge(job_reject,this));//remove edge from matching
-		}
-		
-		return remain;
-	}
 	
-	public ArrayList<Node> rejectTime2(double amount,Matching match,JobNode proposed){
-		ArrayList<Node> rejected=new ArrayList<Node>();
+
+			
+			
+			
+	//tha girnaei treemap me value to amount pou ekane reject
+	public HashMap<Node,Double> rejectTime(double amount,Matching match,JobNode proposed){
+		HashMap<Node,Double> rejected=new HashMap<Node,Double>();
 		JobNode lp=this.getLeastPrefered();
 		double time=Edge.getEdge(lp,this).getCurrent_time();
-		if(time>amount){
+		if(time>amount){//THA DIWKSEI AMOUNT
 			Edge.getEdge(lp,this).setCurrent_time(time-amount);
 			lp.setTime_consumed(lp.getTime_consumed()-(int)amount);
-			rejected.add(lp);
-		}else if(time==amount){
+			rejected.put(lp,amount);
+		}else if(time==amount){//THA DIWKSEI AMOUNT
 			Edge.getEdge(lp,this).setCurrent_time(0);
 			match.removeEdgeFromMatch(lp, Edge.getEdge(lp,this));//remove edge from matching
 			lp.setTime_consumed(lp.getTime_consumed()-(int)amount);
-			rejected.add(lp);
+			rejected.put(lp,amount);
 			refreshPointerIndex(match,proposed);//least prefered job changes
 		}else{
+			boolean change_index=false;
 			double rejection=amount;//total amount of rejection
 			while(rejection>0){//until reject amount decrease to zero
 				lp=this.getLeastPrefered();//get least prefered
@@ -146,17 +111,59 @@ public class MachineNode extends Node{
 				lp.setTime_consumed(lp.getTime_consumed()-true_rej);
 				double assign=Math.max(0,time-rejection);//if edge is empty assign 0 value not negative
 				Edge.getEdge(lp,this).setCurrent_time(assign);
+				rejected.put(lp,(double)true_rej);
 				if(assign==0){//if decreased to zero 
 					match.removeEdgeFromMatch(lp, Edge.getEdge(lp,this));//remove edge from matching
-					refreshPointerIndex(match,proposed);//least prefered job changes
+					change_index=refreshPointerIndex(match,proposed);//least prefered job changes or not
+					//*** an i boolean parei false tote spaei to loop midenizei to rejection
 				}
-				rejected.add(lp);
-				rejection=Math.min(0, time-rejection);
-				rejection=Math.abs(rejection);
+				if(change_index){//the new least prefered didnt change
+					rejection=0;
+				}else{
+					rejection=Math.min(0, time-rejection);
+					rejection=Math.abs(rejection);
+				}
+				
 			}
 		}
 		return rejected;
 	}
+	
+	/**
+	 * This method is responsible for updating the point on the preference list
+	 * for a machine. After an acceptance has occured and no amount of job is assigned
+	 * to the least prefered job, we increase the pointer to the index of the 
+	 * job that proposed last.
+	 * @param job the job that proposed
+	 */
+	public boolean refreshPointerIndex(Matching match,JobNode proposed){
+			boolean cantchange=false;
+			JobNode lest_pref=this.getLeastPrefered();//get current least prefered
+			Edge edge=Edge.getEdge(lest_pref, this);//extract edge
+			if(!match.getMatch_edges().get(lest_pref).contains(edge)){//if not exists in matching
+				int index=this.pref.indexOf(lest_pref);
+				for(int i=index; i>=0; i--){
+					JobNode next=this.pref.get(i);
+					if(match.getMatch_edges().get(next)!=null){
+						if(match.getMatch_edges().get(next).contains(Edge.getEdge(next, this))){
+							this.pref_pointer=this.pref.indexOf(next);
+							int real_index=this.pref_pointer;
+							int pr_index=this.pref.indexOf(proposed);
+							if(real_index<pr_index){
+								cantchange=true;
+								System.out.println("Machine is: "+this.id+" proposed is: "+proposed.id+" swap job is: "+this.getLeastPrefered().id);
+								//xeirizesai me mia boolean an mpei to if ***
+							}
+							break;
+						}
+					}
+				}
+				if(this.getLeastPrefered()==lest_pref){
+					this.pref_pointer=this.pref.indexOf(proposed);
+				}
+			}
+			return cantchange;
+		}
 	
 	
 

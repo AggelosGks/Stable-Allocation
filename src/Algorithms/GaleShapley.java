@@ -1,6 +1,8 @@
 package Algorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import DataStructures.BipartiteGraph;
 import DataStructures.Edge;
 import DataStructures.JobNode;
@@ -89,19 +91,26 @@ public class GaleShapley {
 			double available=Edge.getEdge(job, proposal).computeAvailableTime();//available amount of time on arc
 			double pro_amount=Math.min(time_left, available);//compute minimum amount that can flow through arc
 			if(job.propose(pro_amount, proposal)){//acceptance occurs
-				ArrayList<Node> rejected=proposal.rejectTime2(pro_amount, match, job);
-				for(Node rej : rejected){
+				HashMap<Node,Double> rejected=proposal.rejectTime(pro_amount, match, job);
+				ArrayList<Node> rejections=new ArrayList<Node>();
+				double total=0;
+				for (Node key: rejected.keySet()) {
+					rejections.add(key);
+					total=total+rejected.get(key);
+				}
+				for(Node rej : rejections){
 					if(!(rej.isDummy())&&jobs_assigned.contains(rej)){//if the rejected node was fully assigned
 						jobs_assigned.remove(rej);//remove from asssigned 
 						jobs_unassigned.add((JobNode)rej);//add to unassigned
 					}
 				}
-				job.setTime_consumed(job.getTime_consumed()+(int)pro_amount);
+				//edw na girnaei treemap athroizeis ta value kai prokuptei to egkuro amount
+				job.setTime_consumed(job.getTime_consumed()+(int)total);
 				if(match.containsEdge(Edge.getEdge(job, proposal))){
 					double current=Edge.getEdge(job, proposal).getCurrent_time();
-					Edge.getEdge(job, proposal).setCurrent_time(current+pro_amount);
+					Edge.getEdge(job, proposal).setCurrent_time(current+total);
 				}else{
-					Edge.getEdge(job, proposal).setCurrent_time(pro_amount);//set amount of time for new arc
+					Edge.getEdge(job, proposal).setCurrent_time(total);//set amount of time for new arc
 					match.addEdgeToMatch(job, Edge.getEdge(job, proposal));//add arc to mathcing
 				}
 				if(job.isFullyAssigned()){
