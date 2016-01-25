@@ -16,6 +16,9 @@ public class Instance {
 	public final int m;
 	public final int max_time;
 	public final int min_time;
+	private static BipartiteGraph graph;
+	
+
 	public Instance(int j, int m,int max, int min){
 		this.j=j;
 		this.m=m;
@@ -28,7 +31,8 @@ public class Instance {
 		assignPreferencesJobs();
 		assignPreferencesMachines();
 		Edge.createAllEdges();
-		return new BipartiteGraph();
+		graph=new BipartiteGraph();
+		return graph;
 	}
 	
 	public static int randomWithRange(int min, int max)
@@ -144,6 +148,10 @@ public class Instance {
 	    	}
 	    }
 	    return result;
+	}
+	
+	public static BipartiteGraph getGraph() {
+		return graph;
 	}
 	
 	public BipartiteGraph createReadyInst(){
