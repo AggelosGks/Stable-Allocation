@@ -8,23 +8,35 @@ import DataStructures.RotationPair;
 import DataStructures.RotationStructure;
 
 public class ExposureElliminationAlgorithm {
-	private Matching match;
-	private ArrayList<RotationStructure> rotations;
+	private Matching match;//the matching the algorithm is applied to
+	private ArrayList<RotationStructure> rotations;//list of rotationstructures
 	
 	public ExposureElliminationAlgorithm(Matching m){
 		this.match=m;
 		this.rotations=new ArrayList<RotationStructure>();
 	}
 	
+	
 	public void execute(){
 		ArrayList<JobNode> jobs=JobNode.getJobs();
-		while(jobDecreaseExists(jobs)){
-			JobNode job=extractJob(jobs);
-			RotationStructure rotation=new RotationStructure();
-			RotationPair pair=job.extractRotationPair(match);
-			
-			
-			
+		while(jobDecreaseExists(jobs)){//while a job that can be feel less happy exists
+			JobNode job=extractJob(jobs);//extract this job
+			RotationStructure rotation=new RotationStructure();//init new rotation structure
+			RotationPair pair=job.extractRotationPair(match);//execute rotation
+			System.out.println("New Rotation begins--------------");
+			System.out.println(pair.toString());
+			JobNode rejected=(JobNode)rotation.addPair(pair);
+			boolean control=true;
+			while(control){
+				pair=rejected.extractRotationPair(match, pair.getAmount());
+				rejected=(JobNode)rotation.addPair(pair);
+				System.out.println(pair.toString());
+				if(rotation.containsNode(rejected.id)){
+					control=false;
+					rotation.elliminateStructure(match);
+				}
+			}
+			match.printMatching();
 		}
 	}
 	

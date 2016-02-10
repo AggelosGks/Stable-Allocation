@@ -9,8 +9,8 @@ public class BipartiteGraph {
 	
 	
 	public BipartiteGraph(){
-		this.machines=MachineNode.getMachines();
-		this.jobs=JobNode.getJobs();
+		this.machines=new ArrayList<MachineNode>(MachineNode.getMachines());
+		this.jobs=new ArrayList<JobNode>(JobNode.getJobs());
 	}
 
 	

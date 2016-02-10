@@ -9,6 +9,12 @@ import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JLabel;
 
 
 /**
@@ -50,11 +56,6 @@ public class MainFrame extends javax.swing.JFrame {
         InstanceComboList = new javax.swing.JComboBox();
         FinishSelection = new javax.swing.JButton();
         SetComboList = new javax.swing.JComboBox();
-        SelectMenuDisplay = new javax.swing.JPanel();
-        OPHSLabel = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        Select_Button = new javax.swing.JButton();
-        Select_Instance = new javax.swing.JButton();
         DisplayPanel = new javax.swing.JPanel();
         Initial = new javax.swing.JPanel();
         GraphPanel = new javax.swing.JPanel();
@@ -96,119 +97,68 @@ public class MainFrame extends javax.swing.JFrame {
                 SetComboListActionPerformed(evt);
             }
         });
-        AInitialDisplay = new javax.swing.JPanel();
         
-                AInitialDisplay.setBackground(new java.awt.Color(204, 204, 204));
-                
-                        javax.swing.GroupLayout AInitialDisplayLayout = new javax.swing.GroupLayout(AInitialDisplay);
-                        AInitialDisplay.setLayout(AInitialDisplayLayout);
-                        AInitialDisplayLayout.setHorizontalGroup(
-                            AInitialDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGap(0, 200, Short.MAX_VALUE)
-                        );
-                        AInitialDisplayLayout.setVerticalGroup(
-                            AInitialDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGap(0, 486, Short.MAX_VALUE)
-                        );
-                        
-                                SelectionDisplay.add(AInitialDisplay, "card2");
+        JLabel lblNumberOfJobs = new JLabel("Number of jobs");
+        
+        label = new JLabel("New label");
 
         javax.swing.GroupLayout SETSDisplayLayout = new javax.swing.GroupLayout(SETSDisplay);
-        SETSDisplay.setLayout(SETSDisplayLayout);
         SETSDisplayLayout.setHorizontalGroup(
-            SETSDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SETSDisplayLayout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(FinishSelection, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(57, Short.MAX_VALUE))
-            .addGroup(SETSDisplayLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(SETSDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(SetComboList, 0, 150, Short.MAX_VALUE)
-                    .addComponent(InstanceComboList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        	SETSDisplayLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(SETSDisplayLayout.createSequentialGroup()
+        			.addGap(58)
+        			.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(72, Short.MAX_VALUE))
+        		.addGroup(SETSDisplayLayout.createSequentialGroup()
+        			.addContainerGap(31, Short.MAX_VALUE)
+        			.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+        			.addGap(18))
+        		.addGroup(Alignment.TRAILING, SETSDisplayLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(SETSDisplayLayout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(InstanceComboList, 0, 150, Short.MAX_VALUE)
+        				.addComponent(SetComboList, 0, 150, Short.MAX_VALUE))
+        			.addGap(49))
+        		.addGroup(SETSDisplayLayout.createSequentialGroup()
+        			.addGap(31)
+        			.addComponent(label, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(82, Short.MAX_VALUE))
         );
         SETSDisplayLayout.setVerticalGroup(
-            SETSDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SETSDisplayLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(SetComboList, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(InstanceComboList, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
-                .addComponent(FinishSelection, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(79, 79, 79))
+        	SETSDisplayLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(SETSDisplayLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(SetComboList, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE)
+        			.addGap(22)
+        			.addComponent(label)
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addComponent(InstanceComboList, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+        			.addPreferredGap(ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
+        			.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+        			.addGap(79))
         );
+        SETSDisplay.setLayout(SETSDisplayLayout);
 
         SelectionDisplay.add(SETSDisplay, "card3");
 
-        SelectMenuDisplay.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
-
-        OPHSLabel.setFont(new java.awt.Font("Candara", 1, 14)); // NOI18N
-        OPHSLabel.setText("       OPHS-Menu");
-
-        jButton4.setText("jButton3");
-
-        Select_Button.setText("Select Set");
-
-        Select_Instance.setText("Select Instance");
-        Select_Instance.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Select_InstanceActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout SelectMenuDisplayLayout = new javax.swing.GroupLayout(SelectMenuDisplay);
-        SelectMenuDisplay.setLayout(SelectMenuDisplayLayout);
-        SelectMenuDisplayLayout.setHorizontalGroup(
-            SelectMenuDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SelectMenuDisplayLayout.createSequentialGroup()
-                .addGroup(SelectMenuDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(SelectMenuDisplayLayout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(OPHSLabel))
-                    .addGroup(SelectMenuDisplayLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(SelectMenuDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Select_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Select_Instance, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        SelectMenuDisplayLayout.setVerticalGroup(
-            SelectMenuDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SelectMenuDisplayLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(OPHSLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Select_Instance, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Select_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
-        );
-
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(SelectMenuDisplay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(SelectionDisplay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(19, Short.MAX_VALUE))
+        	MenuPanelLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(MenuPanelLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(SelectionDisplay, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(25, Short.MAX_VALUE))
         );
         MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(SelectMenuDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(SelectionDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        	MenuPanelLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(MenuPanelLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(SelectionDisplay, GroupLayout.PREFERRED_SIZE, 486, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(273, Short.MAX_VALUE))
         );
+        MenuPanel.setLayout(MenuPanelLayout);
 
         DisplayPanel.setBackground(new java.awt.Color(255, 255, 255));
         DisplayPanel.setLayout(new java.awt.CardLayout());
@@ -297,11 +247,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();}
     }// </editor-fold>                        
-
-    private void Select_InstanceActionPerformed(java.awt.event.ActionEvent evt) {                                                
-        // TODO add your handling code here:
-    	
-    }      
     
     private void FinishSelectionActionPerformed(java.awt.event.ActionEvent evt) {                                                
     
@@ -325,23 +270,18 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify        
     private javax.swing.JPanel GraphPanel;
-    private javax.swing.JPanel AInitialDisplay;
     private javax.swing.JPanel DisplayPanel;
     private javax.swing.JButton FinishSelection;
     private javax.swing.JPanel Initial;
     private javax.swing.JComboBox InstanceComboList;
     private javax.swing.JPanel MenuPanel;
-    private javax.swing.JLabel OPHSLabel;
     private javax.swing.JPanel OutputPanel;
     private javax.swing.JPanel SETSDisplay;
-    private javax.swing.JPanel SelectMenuDisplay;
-    private javax.swing.JButton Select_Button;
-    private javax.swing.JButton Select_Instance;
     private javax.swing.JPanel SelectionDisplay;
     private javax.swing.JComboBox SetComboList;
-    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
-    // End of variables declaration                  
-    
-   
+    private JLabel label;
+	public JLabel getLabel() {
+		return label;
+	}
 }

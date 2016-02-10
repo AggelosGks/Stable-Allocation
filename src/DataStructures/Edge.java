@@ -6,8 +6,8 @@ import java.util.TreeMap;
 public class Edge {
 	
 	//instance fields
-	private Node machine;
-	private Node job;
+	private MachineNode machine;
+	private JobNode job;
 	public final double max_time;
 	private double current_time;
 	private static final TreeMap<Integer,ArrayList<Edge>> jobs_machines=new TreeMap<Integer,ArrayList<Edge>>();
@@ -39,12 +39,12 @@ public class Edge {
 		this.job=j;
 	}
 
-	public Node getMachine() {
+	public MachineNode getMachine() {
 		return machine;
 	}
 
 
-	public Node getJob() {
+	public JobNode getJob() {
 		return job;
 	}
 	
