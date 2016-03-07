@@ -133,19 +133,22 @@ public class JobNode extends Node {
 		boolean dropdown=false;
 		//retrieve sorted preference list on current match
 		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		for(MachineNode from: list_OnMatch){
+		int upper=0;
+		if(list_OnMatch.size()==1){
+			upper=1;
+		}else{
+			upper=list_OnMatch.size()-1;
+		}
+		for(int i=0; i<upper; i++){
+			MachineNode from=list_OnMatch.get(i);
 			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();
-			for(MachineNode to : list_OnMatch){
-				if(!from.equals(to)){
+			int index=this.pref.indexOf(from);
+			MachineNode to=this.pref.get(index+1);
 					if(this.proposeExp_Ell(time_on_edge, to)){
 						dropdown=true;
 						break;
 					}
-				}
-			}
-			
 		}
-		
 		return dropdown;
 	}
 	
@@ -153,7 +156,7 @@ public class JobNode extends Node {
 		double avail=Edge.getEdge(this, m).computeAvailableTime();//amount available on edge job-proposal
 		double available_amount=Math.min(amount, avail);//min value between amount of proposal(most prefered of job,job) and available
 		double time_on_machine_lp=Edge.getEdge(m.getLeastPrefered(), m).getCurrent_time();//the amount assigned to the machine and its least prefered job
-		System.out.println(m.getLeastPrefered().id+" "+m.id);
+		//System.out.println(m.getLeastPrefered().id+" "+m.id);
 		available_amount=Math.min(available_amount, time_on_machine_lp);
 		return available_amount;//final amount of distribution
 		
@@ -163,35 +166,45 @@ public class JobNode extends Node {
 		RotationPair pair=new RotationPair();
 		//retrieve sorted preference list on current match
 		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		for(MachineNode from: list_OnMatch){//iterate from most prefered to least
+		int upper=0;
+		if(list_OnMatch.size()==1){
+			upper=1;
+		}else{
+			upper=list_OnMatch.size()-1;
+		}
+		for(int i=0; i<upper; i++){
+			MachineNode from=list_OnMatch.get(i);
 			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();//get amount on edge
-			
-			for(MachineNode to : list_OnMatch){//
-				if(!from.equals(to)){
-					//job proposes amount
-					if(this.proposeExp_Ell(time_on_edge, to)){//if accepted
-						pair.setExtracted_from(from);//set node that amount was taken from
-						pair.setAdded_to(to);//set node that amount will be added 
-						pair.setProposed_by(this);//set node of proposal
-						
-						pair.setAmount(extractAmount(time_on_edge, to));//set final of amount distributed
-						break;
-					}
+			int index=this.pref.indexOf(from);
+			MachineNode to=this.pref.get(index+1);	
+				//job proposes amount
+				if(this.proposeExp_Ell(time_on_edge, to)){//if accepted
+					pair.setExtracted_from(from);//set node that amount was taken from
+					pair.setAdded_to(to);//set node that amount will be added 
+					pair.setProposed_by(this);//set node of proposal
+					pair.setAmount(extractAmount(time_on_edge, to));//set final of amount distributed
+					break;
 				}
-			}
-			break;
 		}
 		return pair;
 	}
 	
 	public RotationPair extractRotationPair(Matching match,double amount){
+		System.out.println("Node: "+this.id);
 		boolean stop=false;
 		RotationPair pair=new RotationPair();
-		//retrieve sorted preference list on current match
+		//code in case next pair is adjusted on match
 		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		for(MachineNode from: list_OnMatch){//iterate from most prefered to least
-			for(MachineNode to : list_OnMatch){//
-				if(!from.equals(to)){
+		int upper=0;
+		if(list_OnMatch.size()==1){
+			upper=1;
+		}else{
+			upper=list_OnMatch.size()-1;
+		}
+		for(int i=0; i<upper; i++){
+			MachineNode from=list_OnMatch.get(i);
+			int index=this.pref.indexOf(from);
+			MachineNode to=this.pref.get(index+1);
 					//job proposes amount
 					if(this.proposeExp_Ell(amount, to)){//if accepted
 						pair.setExtracted_from(from);//set node that amount was taken from
@@ -199,27 +212,27 @@ public class JobNode extends Node {
 						pair.setProposed_by(this);//set node of proposal
 						pair.setAmount(extractAmount(amount, to));//set final of amount distributed
 						stop=true;
-						break;
 					}
-				}
-			}
-			for(MachineNode machine_next:this.pref){
-				if(!from.equals(machine_next)){
-					//job proposes amount
-					if(this.proposeExp_Ell(amount, machine_next)){//if accepted
+			if(!stop){
+				index=index+2;
+				for(int j=index; j<this.pref.size()-1; j++){
+					
+					MachineNode over_to=this.pref.get(j);
+					System.out.println("DDDDDDDDDDDDDDDDDD   "+over_to.id);
+					if(this.proposeExp_Ell(amount, over_to)){//if accepted
+						System.out.println("aaaaaaaaaaaaaaaaaaaaaa   "+over_to.id);
 						pair.setExtracted_from(from);//set node that amount was taken from
-						pair.setAdded_to(machine_next);//set node that amount will be added 
+						pair.setAdded_to(over_to);//set node that amount will be added 
 						pair.setProposed_by(this);//set node of proposal
-						pair.setAmount(extractAmount(amount, machine_next));//set final of amount distributed
+						pair.setAmount(extractAmount(amount, over_to));//set final of amount distributed
 						stop=true;
 						break;
 					}
 				}
 			}
-			if(stop){
-				break;
-			}
 		}
+		
+			
 		return pair;
 	}
 	

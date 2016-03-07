@@ -56,24 +56,26 @@ public class RotationStructure {
 				minimum_amount=pair.getAmount();
 			}
 		}
-		for(RotationPair pair :this.pairs){
-			JobNode proposed_by=pair.getProposed_by();//get job that got worst
-			MachineNode abstracted=pair.getExtracted_from();//get machinenode that amount was extracted from
-			MachineNode added=pair.getAdded_to();//get machinenode that amount was added to
-			double current_time=Edge.getEdge(proposed_by, abstracted).getCurrent_time();//get current amount of time between job and abstracted
-			Edge.getEdge(proposed_by, abstracted).setCurrent_time(current_time-minimum_amount);//set new amount
-			if(Edge.getEdge(proposed_by, abstracted).getCurrent_time()==0){//delete if empty
-				m.removeEdgeFromMatch(Edge.getEdge(proposed_by, abstracted).getJob(), Edge.getEdge(proposed_by, abstracted));
-				//abstracted.refreshPointerRotation(m);
+		
+			for(RotationPair pair :this.pairs){
+				JobNode proposed_by=pair.getProposed_by();//get job that got worst
+				MachineNode abstracted=pair.getExtracted_from();//get machinenode that amount was extracted from
+				MachineNode added=pair.getAdded_to();//get machinenode that amount was added to
+				double current_time=Edge.getEdge(proposed_by, abstracted).getCurrent_time();//get current amount of time between job and abstracted
+				Edge.getEdge(proposed_by, abstracted).setCurrent_time(current_time-minimum_amount);//set new amount
+				if(Edge.getEdge(proposed_by, abstracted).getCurrent_time()==0){//delete if empty
+					m.removeEdgeFromMatch(Edge.getEdge(proposed_by, abstracted).getJob(), Edge.getEdge(proposed_by, abstracted));
+					//abstracted.refreshPointerRotation(m);
+				}
+				
+				current_time=Edge.getEdge(proposed_by, added).getCurrent_time();//get time one edge between job and added
+				Edge.getEdge(proposed_by, added).setCurrent_time(current_time+minimum_amount);//add new amount
+				if(!m.containsEdge(Edge.getEdge(proposed_by, added))){//if edge not in match add it
+					m.addEdgeToMatch(Edge.getEdge(proposed_by, added).getJob(),Edge.getEdge(proposed_by, added));
+				}
+				added.refreshPointerIndex(m,proposed_by);
 			}
-			
-			current_time=Edge.getEdge(proposed_by, added).getCurrent_time();//get time one edge between job and added
-			Edge.getEdge(proposed_by, added).setCurrent_time(current_time+minimum_amount);//add new amount
-			if(!m.containsEdge(Edge.getEdge(proposed_by, added))){//if edge not in match add it
-				m.addEdgeToMatch(Edge.getEdge(proposed_by, added).getJob(),Edge.getEdge(proposed_by, added));
-			}
-			added.refreshPointerIndex(m,proposed_by);
-		}
+		
 	}
 	
 	public String revealQueueStatus(){

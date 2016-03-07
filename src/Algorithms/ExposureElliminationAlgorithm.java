@@ -23,20 +23,29 @@ public class ExposureElliminationAlgorithm {
 			JobNode job=extractJob(jobs);//extract this job
 			RotationStructure rotation=new RotationStructure();//init new rotation structure
 			RotationPair pair=job.extractRotationPair(match);//execute rotation
-			System.out.println("New Rotation begins--------------");
+			System.out.println("			New Rotation begins");
+			System.out.println("---------------------------------");
 			System.out.println(pair.toString());
 			JobNode rejected=(JobNode)rotation.addPair(pair);
 			boolean control=true;
 			while(control){
+				System.out.println("Rejected is : "+rejected.id);
 				pair=rejected.extractRotationPair(match, pair.getAmount());
-				rejected=(JobNode)rotation.addPair(pair);
-				System.out.println(pair.toString());
-				if(rotation.containsNode(rejected.id)){
+				if(pair.getAdded_to()!=null){
+					rejected=(JobNode)rotation.addPair(pair);
+					System.out.println(pair.toString());
+					if(rotation.containsNode(rejected.id)){
+						control=false;
+						rotation.elliminateStructure(match);
+					}
+				}else{
 					control=false;
-					rotation.elliminateStructure(match);
 				}
 			}
-			match.printMatching();
+			System.out.println("--------------------------------");
+			
+			
+			//match.printMatching();
 		}
 	}
 	
