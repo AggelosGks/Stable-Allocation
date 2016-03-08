@@ -103,6 +103,8 @@ public class MachineNode extends Node {
 		JobNode least_pref = pref.get(pref_pointer);
 		return least_pref;
 	}
+	
+	
 
 	public HashMap<Node, Double> rejectTime(double amount, Matching match, JobNode proposed) {
 		HashMap<Node, Double> rejected = new HashMap<Node, Double>();

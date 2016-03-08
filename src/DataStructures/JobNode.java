@@ -140,12 +140,13 @@ public class JobNode extends Node {
 			upper=list_OnMatch.size()-1;
 		}
 		for(int i=0; i<upper; i++){
-			MachineNode from=list_OnMatch.get(i);
-			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();
-			int index=this.pref.indexOf(from);
-			MachineNode to=this.pref.get(index+1);
-					if(this.proposeExp_Ell(time_on_edge, to)){
-						dropdown=true;
+			MachineNode from=list_OnMatch.get(i);//from most prefered currently adjusted
+			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();//get time
+			int index=this.pref.indexOf(from);//find index in pref list
+			MachineNode to=this.pref.get(index+1);//ask next
+			JobNode nextjob=to.getLeastPrefered();//compute rejected
+					if(this.proposeExp_Ell(time_on_edge, to)&&nextjob.hasatLeastOne(time_on_edge, match)){//if accept
+						dropdown=true;//job can get worse
 						break;
 					}
 		}
@@ -218,9 +219,7 @@ public class JobNode extends Node {
 				for(int j=index; j<this.pref.size()-1; j++){
 					
 					MachineNode over_to=this.pref.get(j);
-					System.out.println("DDDDDDDDDDDDDDDDDD   "+over_to.id);
 					if(this.proposeExp_Ell(amount, over_to)){//if accepted
-						System.out.println("aaaaaaaaaaaaaaaaaaaaaa   "+over_to.id);
 						pair.setExtracted_from(from);//set node that amount was taken from
 						pair.setAdded_to(over_to);//set node that amount will be added 
 						pair.setProposed_by(this);//set node of proposal
@@ -266,7 +265,20 @@ public class JobNode extends Node {
 		this.pref_pointer=this.pref.indexOf(machine);
 	}
 	
-	
+	public boolean hasatLeastOne(double amount,Matching match){
+		boolean has=false;
+		ArrayList<MachineNode> list_onmatch=this.getListAssignedtoMatch(match);
+		for(MachineNode m: list_onmatch){
+			int index=this.pref.indexOf(m);
+			MachineNode next=this.pref.get(index+1);
+			if(next!=MachineNode.getDummy()){
+				if(this.proposeExp_Ell(amount, next)){
+					has=true;
+				}
+			}
+		}
+		return has;
+	}
 	
 	public int getPref_pointer() {
 		return pref_pointer;
