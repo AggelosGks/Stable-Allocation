@@ -7,6 +7,7 @@ import DataStructures.BipartiteGraph;
 import DataStructures.Edge;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
+import DataStructures.Node;
 
 public class Instance {
 	
@@ -31,6 +32,85 @@ public class Instance {
 		Edge.createAllEdges();
 		graph=new BipartiteGraph();
 		return graph;
+	}
+	
+	public BipartiteGraph SwapInstance(){
+		ArrayList<JobNode> or_jobs=new ArrayList<JobNode>(JobNode.getJobs());
+		ArrayList<MachineNode> or_machines=new ArrayList<MachineNode>(MachineNode.getMachines());
+		this.clearInstance();
+		JobNode.createDummyJob();
+		MachineNode.createDummyMachine();
+		//swap bipartite graph
+		for(MachineNode m : or_machines){
+			new JobNode(m.upper_cap);	
+		}
+		for(JobNode j : or_jobs){
+			new MachineNode(j.proc_time);
+		}
+		//iterate new jobs (old machines)
+		for(int i=0; i<JobNode.getJobs().size(); i++){
+			ArrayList<MachineNode> pref=new ArrayList<MachineNode>();//create new pref list
+			JobNode job=JobNode.getJobs().get(i);//get current new job
+			MachineNode mach=or_machines.get(i);//get respective old machine
+			for(JobNode j: mach.getPref()){//iterate pref list of old machine
+				if(!j.isDummy()){
+					int id=j.id+or_machines.size();//compute new job according to changes			
+					pref.add(pickMachbyId(id));
+				}
+			}
+			pref.add(MachineNode.getDummy());
+			job.setPref(pref);
+		}
+		for(int i=0; i<MachineNode.getMachines().size(); i++){
+			ArrayList<JobNode> pref=new ArrayList<JobNode>();//create new pref list
+			MachineNode m=MachineNode.getMachines().get(i);//get current new job
+			JobNode j=or_jobs.get(i);//get respective old machine
+			for(MachineNode l: j.getPref()){//iterate pref list of old machine
+				if(!l.isDummy()){
+					int id=l.id-or_jobs.size();//compute new job according to changes
+					pref.add(pickJobbyId(id));
+				}
+			}
+			pref.add(JobNode.getDummy());
+			m.setPref(pref);
+		}
+		Edge.createAllEdges();
+		graph=new BipartiteGraph();
+		return graph;
+	}
+	
+	public JobNode pickJobbyId(int id){
+		JobNode r_job=null;
+		for(JobNode job : JobNode.getJobs()){
+			if(job.id==id){
+				r_job=job;
+				break;
+			}
+		}
+		return r_job;
+	}
+	
+	public MachineNode pickMachbyId(int id){
+		MachineNode r_machine=null;
+		for(MachineNode machine : MachineNode.getMachines()){
+			if(machine.id==id){
+				r_machine=machine;
+				break;
+			}
+		}
+		return r_machine;
+	}
+	
+	
+	
+	public void clearInstance(){
+		JobNode.getJobs().clear();
+		MachineNode.getMachines().clear();
+		Edge.getJobsMachines().clear();
+		JobNode.setDummy(null);
+		MachineNode.setDummy(null);
+		Node.setShare(0);
+		
 	}
 	
 	public static int randomWithRange(int min, int max)

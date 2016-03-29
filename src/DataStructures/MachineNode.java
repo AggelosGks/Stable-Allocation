@@ -2,6 +2,8 @@ package DataStructures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import Computation.ComputationUtil;
 
@@ -29,6 +31,20 @@ public class MachineNode extends Node {
 		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least
 														// prefered choice
 	}
+
+	
+	
+	public ArrayList<JobNode> getPref() {
+		return pref;
+	}
+
+
+
+	public static void setDummy(MachineNode dummy) {
+		MachineNode.dummy = dummy;
+	}
+
+
 
 	@Override
 	public String toString() {
@@ -196,25 +212,16 @@ public class MachineNode extends Node {
 	}
 	
 	private ArrayList<JobNode> retrieveListOnMatch(Matching match){
-		System.out.println("The call from   " +this.id);
 		ArrayList<JobNode> list=new ArrayList<JobNode>();
+		TreeMap<Integer,JobNode> tree=new TreeMap<Integer,JobNode>();
 		for(JobNode job : JobNode.getJobs()){
 			if(match.containsEdge(Edge.getEdge(job,this))){
-				list.add(job);
+				tree.put(this.pref.indexOf(job), job);
 			}
 		}
-		for(JobNode m: list){
-			for(JobNode n: list){
-				if(!m.equals(n)){
-					int m_index=this.pref.indexOf(m);
-					int n_index=this.pref.indexOf(n);
-					int real_mindex=list.indexOf(m);
-					int real_nindex=list.indexOf(n);
-					if(m_index<n_index && real_mindex>real_nindex){
-						ComputationUtil.swapElements(m,n,list);
-					}
-				}
-			}
+		while(!tree.isEmpty()){
+			Entry<Integer, JobNode> x=tree.pollFirstEntry();
+			list.add(x.getValue());
 		}
 		return list;
 		

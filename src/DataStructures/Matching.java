@@ -42,11 +42,31 @@ public class Matching {
 		for(Map.Entry<Node,ArrayList<Edge>> entry : match_edges.entrySet()) {
 			Node node = entry.getKey();
 			ArrayList<Edge> edges = entry.getValue();
-			System.out.println(node.id);
+			System.out.println("J "+node.id);
 			for(Edge e : edges){
 				System.out.println(e.toString());
 			}  
 		}
+		System.out.println("-----------------");
+	}
+	
+	public  void printMatchingSwaped() {
+		System.out.println(" ");
+		System.out.println("-----------------");
+		for(MachineNode mach : MachineNode.getMachines()){
+			int past_id=mach.id-JobNode.getJobs().size();
+			System.out.println("M "+mach.id+" (J"+Integer.toString(past_id)+")");
+			for(Map.Entry<Node,ArrayList<Edge>> entry : match_edges.entrySet()) {
+				ArrayList<Edge> edges = entry.getValue();
+				for(Edge e : edges){
+					if(e.getMachine().id==mach.id)
+					{
+						System.out.println(e.toStringSwaped());
+					}
+				}
+			}
+		}
+		
 		System.out.println("-----------------");
 	}
 	

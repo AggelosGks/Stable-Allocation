@@ -1,7 +1,10 @@
 package DataStructures;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
+import Algorithms.ExposureElliminationAlgorithm;
 import Computation.ComputationUtil;
 
 public class JobNode extends Node {
@@ -27,6 +30,12 @@ public class JobNode extends Node {
 		this.pref_pointer = 0;// pointer start at first choice
 	}
 
+	
+	public ArrayList<MachineNode> getPref() {
+		return pref;
+	}
+
+
 	@Override
 	public String toString() {
 		String x = "";
@@ -39,6 +48,7 @@ public class JobNode extends Node {
 
 	public void setPref(ArrayList<MachineNode> pref) {
 		this.pref = pref;
+		
 	}
 
 	public static JobNode getDummy() {
@@ -51,6 +61,12 @@ public class JobNode extends Node {
 
 	public static void createDummyJob() {
 		new JobNode(Integer.MAX_VALUE);
+	}
+
+	
+	
+	public static void setDummy(JobNode dummy) {
+		JobNode.dummy = dummy;
 	}
 
 	public static ArrayList<JobNode> getJobs() {
@@ -109,10 +125,8 @@ public class JobNode extends Node {
 		return accepts;
 	}
 	
-	public boolean proposeExp_Ell(double amount, MachineNode m){
-		double avail=Edge.getEdge(this, m).computeAvailableTime();
-		double available_amount=Math.min(amount, avail);
-		if(m.prefersAccRej(this)&& available_amount>0){
+	public boolean proposeExp_Ell(double amount, MachineNode to){
+		if(to.prefersAccRej(this)&& amount>0){
 			return true;
 		}else{
 			return false;
@@ -123,139 +137,91 @@ public class JobNode extends Node {
 		this.pref_pointer++;
 	}
 
-	/**
-	 * Retrieves a sorted list (according to preferences) of connected machines on the current match.
-	 * Starting from the most prefered we examine if decrease hapiness allocation exists.
-	 * @param match the current match
-	 * @return true if allocation exists
-	 */
+	
 	public boolean canGetWorse(Matching match){
-		boolean dropdown=false;
-		//retrieve sorted preference list on current match
-		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		int upper=0;
-		if(list_OnMatch.size()==1){
-			upper=1;
-		}else{
-			upper=list_OnMatch.size()-1;
+		RotationPair pair=null;
+		boolean can=false;
+		ArrayList<MachineNode> machines=this.getListAssignedtoMatch(match);//get all machines that currently assigned to match with this job
+		for(MachineNode machine : machines){//iterate machines
+			
+			double amount=Edge.getEdge(this, machine).getCurrent_time();//get time on edge
+			int index=this.pref.indexOf(machine);//get index on preflist
+			MachineNode next=this.pref.get(index+1);
+			System.out.println("M"+machine.id+" M"+next.id+" J"+this.id);
+			double available_amount=extractFeasibleAmount(next,amount);
+			if(this.proposeExp_Ell(available_amount, next)){//if machine accepts begin rotation
+				System.out.println("					New Rotation ("+this.id+")");
+				pair=new RotationPair(machine,next,this,available_amount);
+				System.out.println(pair.toString());
+				break;
+			}
 		}
-		for(int i=0; i<upper; i++){
-			MachineNode from=list_OnMatch.get(i);//from most prefered currently adjusted
-			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();//get time
-			int index=this.pref.indexOf(from);//find index in pref list
-			MachineNode to=this.pref.get(index+1);//ask next
-			JobNode nextjob=to.getLeastPrefered();//compute rejected
-					if(this.proposeExp_Ell(time_on_edge, to)&&nextjob.hasatLeastOne(time_on_edge, match)){//if accept
-						dropdown=true;//job can get worse
-						break;
-					}
-		}
-		return dropdown;
-	}
-	
-	private double extractAmount(double amount, MachineNode m){
-		double avail=Edge.getEdge(this, m).computeAvailableTime();//amount available on edge job-proposal
-		double available_amount=Math.min(amount, avail);//min value between amount of proposal(most prefered of job,job) and available
-		double time_on_machine_lp=Edge.getEdge(m.getLeastPrefered(), m).getCurrent_time();//the amount assigned to the machine and its least prefered job
-		//System.out.println(m.getLeastPrefered().id+" "+m.id);
-		available_amount=Math.min(available_amount, time_on_machine_lp);
-		return available_amount;//final amount of distribution
-		
-	}
-	
-	public RotationPair extractRotationPair(Matching match){
-		RotationPair pair=new RotationPair();
-		//retrieve sorted preference list on current match
-		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		int upper=0;
-		if(list_OnMatch.size()==1){
-			upper=1;
-		}else{
-			upper=list_OnMatch.size()-1;
-		}
-		for(int i=0; i<upper; i++){
-			MachineNode from=list_OnMatch.get(i);
-			double time_on_edge=Edge.getEdge(this, from).getCurrent_time();//get amount on edge
-			int index=this.pref.indexOf(from);
-			MachineNode to=this.pref.get(index+1);	
-				//job proposes amount
-				if(this.proposeExp_Ell(time_on_edge, to)){//if accepted
-					pair.setExtracted_from(from);//set node that amount was taken from
-					pair.setAdded_to(to);//set node that amount will be added 
-					pair.setProposed_by(this);//set node of proposal
-					pair.setAmount(extractAmount(time_on_edge, to));//set final of amount distributed
-					break;
+		if(pair!=null){
+			RotationStructure rotation=new RotationStructure();
+			JobNode rejected=rotation.addPair(pair);
+			while(rotation.isOpen()){
+				RotationPair next_pair=rejected.extractNextPair(rotation.retrieveLastDistributedAmount(), match);				System.out.println(next_pair.toString());
+				rejected=rotation.addPair(next_pair);
+				if(rotation.containsNode(rejected.id)){
+					rotation.close();
 				}
+			}
+			if(rotation.exists()){
+				can=true;
+				ExposureElliminationAlgorithm.setRunner(rotation);//save last rotation
+			}
 		}
-		return pair;
+		return can;
 	}
-	
-	public RotationPair extractRotationPair(Matching match,double amount){
-		System.out.println("Node: "+this.id);
-		boolean stop=false;
+
+	public RotationPair extractNextPair(double amount,Matching match){
+		boolean finished=false;
 		RotationPair pair=new RotationPair();
-		//code in case next pair is adjusted on match
-		ArrayList<MachineNode> list_OnMatch=this.getListAssignedtoMatch(match);
-		int upper=0;
-		if(list_OnMatch.size()==1){
-			upper=1;
-		}else{
-			upper=list_OnMatch.size()-1;
-		}
-		for(int i=0; i<upper; i++){
-			MachineNode from=list_OnMatch.get(i);
-			int index=this.pref.indexOf(from);
-			MachineNode to=this.pref.get(index+1);
-					//job proposes amount
-					if(this.proposeExp_Ell(amount, to)){//if accepted
-						pair.setExtracted_from(from);//set node that amount was taken from
-						pair.setAdded_to(to);//set node that amount will be added 
-						pair.setProposed_by(this);//set node of proposal
-						pair.setAmount(extractAmount(amount, to));//set final of amount distributed
-						stop=true;
-					}
-			if(!stop){
-				index=index+2;
-				for(int j=index; j<this.pref.size()-1; j++){
-					
-					MachineNode over_to=this.pref.get(j);
-					if(this.proposeExp_Ell(amount, over_to)){//if accepted
-						pair.setExtracted_from(from);//set node that amount was taken from
-						pair.setAdded_to(over_to);//set node that amount will be added 
-						pair.setProposed_by(this);//set node of proposal
-						pair.setAmount(extractAmount(amount, over_to));//set final of amount distributed
-						stop=true;
+		ArrayList<MachineNode> machines=this.getListAssignedtoMatch(match);//get all machines that currently assigned to match with this job
+		for(MachineNode machine : machines){//iterate machines
+			int index=this.pref.indexOf(machine);//get index on preflist
+			for(MachineNode to : this.pref){//iterate all next ones on preflist (inside rotation a change can be make 2 or 3 steps forward
+				if(pref.indexOf(to)>index){
+					System.out.println("--"+machine.id);
+					double available_amount=extractFeasibleAmount(to,amount);
+					if(this.proposeExp_Ell(available_amount, to)){
+						System.out.println("*****");
+						pair.setAdded_to(to);
+						pair.setAmount(available_amount);
+						pair.setExtracted_from(machine);
+						pair.setProposed_by(this);
+						finished=true;
 						break;
 					}
 				}
 			}
+			if(finished){
+				break;
+			}
 		}
-		
-			
 		return pair;
 	}
 	
-	
+	public double extractFeasibleAmount(MachineNode next,double amount){//amount is the amount of proposal
+		System.out.println(next.id);
+		double avail=Edge.getEdge(this, next).computeAvailableTime();//available time to add with machine proposed
+		double feasible=Math.min(amount, avail);
+		double rejected=Edge.getEdge(next.getLeastPrefered(),next).getCurrent_time();
+		return Math.min(feasible, rejected); //minimum of two amounts
+	}
+
 	
 	//Return the least prefered machine of a job that is currently assigned to job in the match
 	public ArrayList<MachineNode> getListAssignedtoMatch(Matching match){
 		ArrayList<Edge> edges=match.getMatch_edges().get(this);
+		TreeMap<Integer,MachineNode> tree=new TreeMap<Integer,MachineNode>();
 		ArrayList<MachineNode> machines=new ArrayList<MachineNode>();
 		for(Edge e : edges){
-			machines.add(e.getMachine());
+			tree.put(this.pref.indexOf(e.getMachine()),e.getMachine());
 		}
-		for(MachineNode m: machines){
-			for(MachineNode n: machines){
-				if(!m.equals(n)){
-					int m_index=this.pref.indexOf(m);
-					int n_index=this.pref.indexOf(n);
-					int real_mindex=machines.indexOf(m);
-					int real_nindex=machines.indexOf(n);
-					if(m_index<n_index && real_mindex>real_nindex){
-						ComputationUtil.swapElements(m,n,machines);
-					}
-				}
-			}
+		while(!tree.isEmpty()){
+			Entry<Integer, MachineNode> x=tree.pollFirstEntry();
+			machines.add(x.getValue());
 		}
 		this.pref_pointer=this.pref.indexOf(machines.get(machines.size()-1));
 		return machines;
@@ -264,21 +230,7 @@ public class JobNode extends Node {
 	public void updatePointerFixedIntex(MachineNode machine){
 		this.pref_pointer=this.pref.indexOf(machine);
 	}
-	
-	public boolean hasatLeastOne(double amount,Matching match){
-		boolean has=false;
-		ArrayList<MachineNode> list_onmatch=this.getListAssignedtoMatch(match);
-		for(MachineNode m: list_onmatch){
-			int index=this.pref.indexOf(m);
-			MachineNode next=this.pref.get(index+1);
-			if(next!=MachineNode.getDummy()){
-				if(this.proposeExp_Ell(amount, next)){
-					has=true;
-				}
-			}
-		}
-		return has;
-	}
+
 	
 	public int getPref_pointer() {
 		return pref_pointer;

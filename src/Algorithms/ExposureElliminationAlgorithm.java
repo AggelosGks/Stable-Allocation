@@ -3,6 +3,7 @@ package Algorithms;
 import java.util.ArrayList;
 
 import DataStructures.JobNode;
+import DataStructures.MachineNode;
 import DataStructures.Matching;
 import DataStructures.RotationPair;
 import DataStructures.RotationStructure;
@@ -10,78 +11,57 @@ import DataStructures.RotationStructure;
 public class ExposureElliminationAlgorithm {
 	private Matching match;//the matching the algorithm is applied to
 	private ArrayList<RotationStructure> rotations;//list of rotationstructures
+	private static RotationStructure runner;
 	
 	public ExposureElliminationAlgorithm(Matching m){
 		this.match=m;
 		this.rotations=new ArrayList<RotationStructure>();
 	}
 	
-	
 	public void execute(){
-		ArrayList<JobNode> jobs=JobNode.getJobs();
-		while(jobDecreaseExists(jobs)){//while a job that can be feel less happy exists
-			JobNode job=extractJob(jobs);//extract this job
-			RotationStructure rotation=new RotationStructure();//init new rotation structure
-			RotationPair pair=job.extractRotationPair(match);//execute rotation
-			System.out.println("			New Rotation begins");
-			System.out.println("---------------------------------");
-			System.out.println(pair.toString());
-			JobNode rejected=(JobNode)rotation.addPair(pair);
-			boolean control=true;
-			while(control){
-				System.out.println("Rejected is : "+rejected.id);
-				pair=rejected.extractRotationPair(match, pair.getAmount());
-				if(pair.getAdded_to()!=null){
-					rejected=(JobNode)rotation.addPair(pair);
-					System.out.println(pair.toString());
-					if(rotation.containsNode(rejected.id)){
-						control=false;
-						rotation.elliminateStructure(match);
-					}
-				}else{
-					control=false;
-				}
+		ArrayList<JobNode> jobs=new ArrayList<JobNode>(JobNode.getJobs());//get all jobs
+		while(decreaseExists(jobs,this.match)){
+			System.out.println("CCCCCCCCCCCCC");
+			runner.elliminateStructure(match);
+			match.printMatching();
+			rotations.add(runner);
+			for(MachineNode mach : MachineNode.getMachines()){
+				mach.refreshPointerRotation(match);
 			}
-			System.out.println("--------------------------------");
 			
-			
-			//match.printMatching();
 		}
 	}
 	
+	
+	public static void setRunner(RotationStructure runner) {
+		ExposureElliminationAlgorithm.runner = runner;
+	}
+
 	/**
-	 * Examines whether a job node may decrease its hapiness.
+	 * Examines wether a decrease of happiness exists for one or more jobs.
 	 * @param jobs
-	 * @return true if at least one job exists
+	 * @param match
+	 * @return true if job can get less happy
 	 */
-	private boolean jobDecreaseExists(ArrayList<JobNode> jobs){
-		boolean can=false;
-		for(JobNode job : jobs){
-			if(job.canGetWorse(this.match)){
-				can=true;
+	public boolean decreaseExists(ArrayList<JobNode> jobs,Matching match){
+		boolean decrease=false;
+		for(JobNode job: jobs){
+			if(job.canGetWorse(match)){
+				decrease=true;
 				break;
 			}
 		}
-		return can;
+		return decrease;
 	}
 	
 
 	
-	/**
-	 * Extracts the first feasible job node for experiencing a hapiness decrease.
-	 * @param jobs
-	 * @return node the node that experiences the decrease.
-	 */
-	private JobNode extractJob(ArrayList<JobNode> jobs){
-		JobNode node=null;
-		for(JobNode job : jobs){
-			if(job.canGetWorse(this.match)){
-				node=job;
-				break;
-			}
-		}
-		return node;
-	}
+	
+	
+
+	
+
+
 	
 	
 }

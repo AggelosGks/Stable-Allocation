@@ -7,7 +7,6 @@ public class RotationPair {
 	private double amount;
 
 	public RotationPair(MachineNode extracted_from, MachineNode added_to, JobNode proposed_by, double amount) {
-		super();
 		this.extracted_from = extracted_from;
 		this.added_to = added_to;
 		this.proposed_by = proposed_by;

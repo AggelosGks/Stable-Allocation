@@ -21,6 +21,15 @@ public class Edge {
 	}
 	
 	
+	
+	
+	public static TreeMap<Integer, ArrayList<Edge>> getJobsMachines() {
+		return jobs_machines;
+	}
+
+
+
+
 	public double getCurrent_time() {
 		return current_time;
 	}
@@ -93,6 +102,12 @@ public class Edge {
 	@Override
 	public String toString() {
 		return "Edge [machine=" + machine.id + ", job=" + job.id + ", max_time=" + max_time + ", current_time=" + current_time
+				+ "]";
+	}
+
+	public String toStringSwaped() {
+		int id=job.id+MachineNode.getMachines().size();
+		return "Edge [machine=" + machine.id + ", job=" + job.id + "(M"+id+")" + ", max_time=" + max_time + ", current_time=" + current_time
 				+ "]";
 	}
 

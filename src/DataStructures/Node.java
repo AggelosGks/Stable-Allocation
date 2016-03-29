@@ -18,6 +18,10 @@ public class Node {
 		
 		return isDummy;
 	}
+
+	public static void setShare(int share) {
+		Node.share = share;
+	}
 	
 
 }
