@@ -5,7 +5,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import Algorithms.ExposureElliminationAlgorithm;
-import Computation.ComputationUtil;
+
 
 public class JobNode extends Node {
 	private static final ArrayList<JobNode> jobs = new ArrayList<JobNode>();// total
@@ -132,6 +132,14 @@ public class JobNode extends Node {
 			return false;
 		}
 	}
+	//not used
+	public boolean proposeExp_Ellinside(double amount, MachineNode to){
+		if(to.prefersAccRejinside(this)&& amount>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	public void refreshPointerIndex() {
 		this.pref_pointer++;
@@ -143,67 +151,113 @@ public class JobNode extends Node {
 		boolean can=false;
 		ArrayList<MachineNode> machines=this.getListAssignedtoMatch(match);//get all machines that currently assigned to match with this job
 		for(MachineNode machine : machines){//iterate machines
-			
 			double amount=Edge.getEdge(this, machine).getCurrent_time();//get time on edge
 			int index=this.pref.indexOf(machine);//get index on preflist
 			MachineNode next=this.pref.get(index+1);
-			System.out.println("M"+machine.id+" M"+next.id+" J"+this.id);
-			double available_amount=extractFeasibleAmount(next,amount);
-			if(this.proposeExp_Ell(available_amount, next)){//if machine accepts begin rotation
-				System.out.println("					New Rotation ("+this.id+")");
-				pair=new RotationPair(machine,next,this,available_amount);
-				System.out.println(pair.toString());
-				break;
+			if(!next.isDummy()){
+				double available_amount=extractFeasibleAmount(next,amount);
+				if(this.proposeExp_Ell(available_amount, next)){//if machine accepts begin rotation
+					System.out.println("New Rotation Begins with J"+this.id);
+					pair=new RotationPair(machine,next,this,available_amount);
+					System.out.println(pair.toString());
+					break;
+				}
 			}
 		}
 		if(pair!=null){
 			RotationStructure rotation=new RotationStructure();
-			JobNode rejected=rotation.addPair(pair);
+			JobNode rejected=rotation.addPair(pair,match);
+			MachineNode.refreshMachines(match);
+			System.out.println("REJECTED IS : "+rejected.id);
 			while(rotation.isOpen()){
-				RotationPair next_pair=rejected.extractNextPair(rotation.retrieveLastDistributedAmount(), match);				System.out.println(next_pair.toString());
-				rejected=rotation.addPair(next_pair);
-				if(rotation.containsNode(rejected.id)){
+				MachineNode first_rejection=rotation.retrieveFirstRejectedMachine();
+				RotationPair next_pair=rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match,first_rejection);				
+				if(next_pair==null){//this code of if is obselet
 					rotation.close();
+				}else{
+					System.out.println(next_pair.toString());
+					rejected=rotation.addPair(next_pair,match);
+					MachineNode.refreshMachines(match);
+					System.out.println("			REJECTED IS : "+rejected.id);
+					if(rotation.containsNode(rejected.id)){
+						rotation.close();
+						if(rotation.existsAandC()){
+							System.out.println("X");
+							can=true;
+							ExposureElliminationAlgorithm.setRunner(rotation);//save last rotation
+						}
+					}
 				}
 			}
-			if(rotation.exists()){
-				can=true;
-				ExposureElliminationAlgorithm.setRunner(rotation);//save last rotation
-			}
+			
 		}
 		return can;
 	}
 
-	public RotationPair extractNextPair(double amount,Matching match){
-		boolean finished=false;
-		RotationPair pair=new RotationPair();
+	public boolean canGetWorse2(Matching match){
+	
+		RotationPair pair=null;
+		boolean can=false;
 		ArrayList<MachineNode> machines=this.getListAssignedtoMatch(match);//get all machines that currently assigned to match with this job
 		for(MachineNode machine : machines){//iterate machines
+			double amount=Edge.getEdge(this, machine).getCurrent_time();//get time on edge
+			
 			int index=this.pref.indexOf(machine);//get index on preflist
-			for(MachineNode to : this.pref){//iterate all next ones on preflist (inside rotation a change can be make 2 or 3 steps forward
-				if(pref.indexOf(to)>index){
-					System.out.println("--"+machine.id);
-					double available_amount=extractFeasibleAmount(to,amount);
-					if(this.proposeExp_Ell(available_amount, to)){
-						System.out.println("*****");
-						pair.setAdded_to(to);
-						pair.setAmount(available_amount);
-						pair.setExtracted_from(machine);
-						pair.setProposed_by(this);
-						finished=true;
-						break;
+			MachineNode next=this.pref.get(index+1);
+			if(!next.isDummy()){
+				double available_amount=extractFeasibleAmount(next,amount);
+				if(this.proposeExp_Ell(available_amount, next)){//if machine accepts begin rotation
+					System.out.println("New Rotation Begins with J"+this.id);
+					pair=new RotationPair(machine,next,this,available_amount);
+					System.out.println(pair.toString());
+					RotationStructure rotation=new RotationStructure();
+					JobNode rejected=rotation.addPair(pair,match);
+					System.out.println("REJECTED IS : "+rejected.id);
+					while(rotation.isOpen()){
+						MachineNode first_rejection=rotation.retrieveFirstRejectedMachine();
+						RotationPair next_pair=rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match,first_rejection);				
+						if(next_pair==null){//this code of if is obselet
+							rotation.close();
+						}else{
+							System.out.println(next_pair.toString());
+							rejected=rotation.addPair(next_pair,match);
+							System.out.println("			REJECTED IS : "+rejected.id);
+							if(rotation.containsNode(rejected.id)){
+								rotation.close();
+								if(rotation.existsAandC()){
+									System.out.println("X");
+									can=true;
+									ExposureElliminationAlgorithm.setRunner(rotation);//save last rotation
+								}
+							}
+						}
 					}
 				}
 			}
-			if(finished){
+			if(can){
 				break;
+			}
+		}
+		return can;
+	}
+	
+	public RotationPair extractNextPair(double amount,Matching match,MachineNode firstrejection){
+		RotationPair pair=null;
+		System.out.println("------>"+firstrejection.id);
+		int index=this.pref.indexOf(firstrejection);//get index on preflist
+		for(MachineNode to : this.pref){//iterate all next ones on preflist (inside rotation a change can be make 2 or 3 steps forward
+			if(pref.indexOf(to)>index&&to!=MachineNode.getDummy()){
+				double available_amount=extractFeasibleAmount(to,amount);
+				if(this.proposeExp_Ell(available_amount, to)){
+					pair=new RotationPair(firstrejection,to,this,available_amount);
+					break;
+				}
 			}
 		}
 		return pair;
 	}
 	
 	public double extractFeasibleAmount(MachineNode next,double amount){//amount is the amount of proposal
-		System.out.println(next.id);
 		double avail=Edge.getEdge(this, next).computeAvailableTime();//available time to add with machine proposed
 		double feasible=Math.min(amount, avail);
 		double rejected=Edge.getEdge(next.getLeastPrefered(),next).getCurrent_time();

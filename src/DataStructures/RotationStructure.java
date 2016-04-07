@@ -1,6 +1,8 @@
 package DataStructures;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 //Each rotation structure instance actually implements a full rotation exposure and ellimination.
@@ -25,6 +27,11 @@ public class RotationStructure {
 		return this.pairs.get(size_of_pairs).getAmount();
 	}
 	
+	public MachineNode retrieveFirstRejectedMachine(){
+		int size_of_pairs=this.pairs.size()-1;	
+		return this.pairs.get(size_of_pairs).getAdded_to();
+	}
+	
 	public boolean isOpen(){
 		return this.open;
 	}
@@ -40,7 +47,7 @@ public class RotationStructure {
 	 * @param pair
 	 * @return
 	 */
-	public JobNode addPair(RotationPair pair) {
+	public JobNode addPair(RotationPair pair,Matching m) {
 		if(pair==null){
 			System.err.println("Pair arrived empty");
 		}
@@ -71,26 +78,6 @@ public class RotationStructure {
 				minimum_amount=pair.getAmount();
 			}
 		}
-		
-		ArrayList<RotationPair> deleted=new ArrayList<RotationPair>();
-		for(RotationPair pair : this.pairs){
-			boolean delete=false;
-			for(RotationPair p :this.pairs){
-				delete=createsCycle(pair,p);
-				if(delete){
-					break;
-				}else{
-					continue;
-				}
-			}
-			if(!delete){
-				deleted.add(pair);
-			}
-		}
-		for(RotationPair pair : deleted){
-			this.pairs.remove(pair);
-		}
-		
 		for(RotationPair pair :this.pairs){
 				JobNode proposed_by=pair.getProposed_by();//get job that got worst
 				MachineNode abstracted=pair.getExtracted_from();//get machinenode that amount was extracted from
@@ -112,7 +99,7 @@ public class RotationStructure {
 		}
 	}
 	
-	public boolean exists(){
+	public boolean existsAandC(){
 		boolean exists=false;
 		double minimum_amount=Integer.MAX_VALUE;
 		for(RotationPair pair : this.pairs){
@@ -123,7 +110,10 @@ public class RotationStructure {
 		if(minimum_amount>0){
 			exists=true;
 		}
-		return exists;
+	
+		boolean cycle=createsCycle();
+		
+		return (exists&&cycle);
 	}
 	
 	public String revealQueueStatus(){
@@ -134,12 +124,46 @@ public class RotationStructure {
 		return x;
 	}
 
-	private boolean createsCycle(RotationPair a, RotationPair b){
-		if(a.getAdded_to().id==b.getExtracted_from().id&&a.getExtracted_from().id==b.getAdded_to().id){
-			return true;
-		}else{
-			return false;
+	private boolean createsCycle(){
+		HashMap<MachineNode,Integer> m_v=new HashMap<MachineNode,Integer>();
+		for(RotationPair pair : this.pairs){
+			MachineNode extracted=pair.getExtracted_from();
+			if(m_v.get(extracted)==null){
+				m_v.put(extracted, 1);
+			}else{
+				m_v.replace(extracted, m_v.get(extracted)+1);
+			}
+			MachineNode added=pair.getAdded_to();
+			if(m_v.get(added)==null){
+				m_v.put(added, 1);
+			}else{
+				m_v.replace(added, m_v.get(added)+1);
+			}
 		}
+		boolean unfeasible=true;
+		for(Entry<MachineNode, Integer> x : m_v.entrySet()){
+			if(x.getValue()!=2){
+				unfeasible=false;
+				break;
+			}
+		}
+		return unfeasible;
+	}
+	
+	
+	public void clearstack(){
+		this.queue.clear();
+	}
+	
+	
+
+	@Override
+	public String toString() {
+		String x="";
+		for(RotationPair pair : this.pairs){
+			System.out.println(pair.toString());
+		}
+		return x;
 	}
 
 

@@ -25,6 +25,8 @@ public class Instance {
 		this.min_time=min;
 	}
 	
+	
+
 	public BipartiteGraph createInstance(){
 		createNodes();
 		assignPreferencesJobs();
@@ -347,6 +349,309 @@ public class Instance {
 				p.add(JobNode.getDummy());
 				j.setPref(p);
 			}
+		}
+		Edge.createAllEdges();
+		return new BipartiteGraph();
+		
+	}
+	public BipartiteGraph createReadyInst2(){
+		JobNode.createDummyJob();
+		MachineNode.createDummyMachine();
+		ArrayList<Integer> times=new ArrayList<Integer>();
+		times.add(4);times.add(15);times.add(13);times.add(10);
+		for(int i=0; i<4; i++){
+			new JobNode(times.get(i));
+		}
+		ArrayList<Integer> capacities=new ArrayList<Integer>();
+		capacities.add(13);capacities.add(14);capacities.add(11);capacities.add(4);
+		for(int i=0; i<4; i++){
+			new MachineNode(capacities.get(i));
+		}
+		for(JobNode j: JobNode.getJobs()){
+			if(j.id==2){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==3){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==4){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(1));
+				
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==5){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(0));
+			
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			
+		}
+		
+		for(MachineNode j: MachineNode.getMachines()){
+			if(j.id==6){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(3));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==7){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(1));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==8){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(2));
+				
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==9){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(0));
+
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			
+			
+		}
+		Edge.createAllEdges();
+		return new BipartiteGraph();
+		
+	}
+	public BipartiteGraph createReadyInst3(){
+		JobNode.createDummyJob();
+		MachineNode.createDummyMachine();
+		ArrayList<Integer> times=new ArrayList<Integer>();
+		times.add(13);times.add(13);times.add(19);times.add(11);
+		for(int i=0; i<4; i++){
+			new JobNode(times.get(i));
+		}
+		ArrayList<Integer> capacities=new ArrayList<Integer>();
+		capacities.add(3);capacities.add(10);capacities.add(40);capacities.add(3);
+		for(int i=0; i<4; i++){
+			new MachineNode(capacities.get(i));
+		}
+		for(JobNode j: JobNode.getJobs()){
+			if(j.id==2){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==3){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==4){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(1));
+				
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==5){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(3));
+			
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			
+		}
+		
+		for(MachineNode j: MachineNode.getMachines()){
+			if(j.id==6){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(2));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==7){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(2));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==8){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(2));
+				
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==9){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(2));
+
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			
+			
+		}
+		Edge.createAllEdges();
+		return new BipartiteGraph();
+		
+	}
+	public BipartiteGraph createReadyInst4(){
+		JobNode.createDummyJob();
+		MachineNode.createDummyMachine();
+		ArrayList<Integer> times=new ArrayList<Integer>();
+		times.add(7);times.add(19);times.add(3);times.add(5);
+		for(int i=0; i<4; i++){
+			new JobNode(times.get(i));
+		}
+		ArrayList<Integer> capacities=new ArrayList<Integer>();
+		capacities.add(1);capacities.add(23);capacities.add(7);capacities.add(3);
+		for(int i=0; i<4; i++){
+			new MachineNode(capacities.get(i));
+		}
+		for(JobNode j: JobNode.getJobs()){
+			if(j.id==2){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==3){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==4){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(3));
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(2));
+				
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==5){
+				ArrayList<MachineNode> p=new ArrayList<MachineNode>();
+				p.add(MachineNode.getMachines().get(0));
+				p.add(MachineNode.getMachines().get(2));
+				p.add(MachineNode.getMachines().get(1));
+				p.add(MachineNode.getMachines().get(3));
+			
+				p.add(MachineNode.getDummy());
+				j.setPref(p);
+			}
+			
+		}
+		
+		for(MachineNode j: MachineNode.getMachines()){
+			if(j.id==6){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(0));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}else if(j.id==7){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(1));
+			
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==8){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(1));
+				p.add(JobNode.getJobs().get(0));
+				
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			else if(j.id==9){
+				ArrayList<JobNode> p=new ArrayList<JobNode>();
+				p.add(JobNode.getJobs().get(0));
+				p.add(JobNode.getJobs().get(2));
+				p.add(JobNode.getJobs().get(3));
+				p.add(JobNode.getJobs().get(1));
+
+				p.add(JobNode.getDummy());
+				j.setPref(p);
+			}
+			
+			
 		}
 		Edge.createAllEdges();
 		return new BipartiteGraph();

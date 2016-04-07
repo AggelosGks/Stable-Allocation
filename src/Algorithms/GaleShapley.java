@@ -139,6 +139,10 @@ public class GaleShapley {
 			System.out.println("O "+m.id+" exei ton"+m.getPref_pointer());
 		}
 	}
+
+	public BipartiteGraph getGraph() {
+		return graph;
+	}
 	
 	
 

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
-import DataStructures.RotationPair;
 import DataStructures.RotationStructure;
 
 public class ExposureElliminationAlgorithm {
@@ -20,11 +19,16 @@ public class ExposureElliminationAlgorithm {
 	
 	public void execute(){
 		ArrayList<JobNode> jobs=new ArrayList<JobNode>(JobNode.getJobs());//get all jobs
+		MachineNode.refreshMachines(match);
 		while(decreaseExists(jobs,this.match)){
-			System.out.println("CCCCCCCCCCCCC");
+			System.out.println("----------------------------------------");
+			runner.toString();
+			System.out.println("----------------------------------------");
+			System.out.println(" ");
+			System.out.println(" ");
 			runner.elliminateStructure(match);
-			match.printMatching();
 			rotations.add(runner);
+			runner=null;
 			for(MachineNode mach : MachineNode.getMachines()){
 				mach.refreshPointerRotation(match);
 			}
@@ -46,7 +50,7 @@ public class ExposureElliminationAlgorithm {
 	public boolean decreaseExists(ArrayList<JobNode> jobs,Matching match){
 		boolean decrease=false;
 		for(JobNode job: jobs){
-			if(job.canGetWorse(match)){
+			if(job.canGetWorse2(match)){
 				decrease=true;
 				break;
 			}

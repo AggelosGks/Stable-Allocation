@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import Computation.ComputationUtil;
+
 
 public class MachineNode extends Node {
 	private static MachineNode dummy;
@@ -90,21 +90,11 @@ public class MachineNode extends Node {
 		return isprefered;
 	}
 	
-	/**
-	 * Makes the logical comparison for two job nodes. The comparison is
-	 * implemented by the indexes of two jobs in the preference list. One job is
-	 * indicated by the pointer and its current position.
-	 * 
-	 * @param job
-	 *            the job node to be compared
-	 * @return true if job is preferable, false otherwise.
-	 */
-	public boolean prefersAccRejExpEll(JobNode job) {
+	//not used
+	public boolean prefersAccRejinside(JobNode job) {
 		boolean isprefered = false;
 		int index_candidate = pref.indexOf(job);
-		JobNode lp=this.getLeastPrefered();
-		double avail=Edge.getEdge(lp,this).computeAvailableTime();
-		if (index_candidate < pref_pointer && avail>0) {
+		if (index_candidate <= pref_pointer) {
 			isprefered = true;
 		}
 		return isprefered;
@@ -229,16 +219,32 @@ public class MachineNode extends Node {
 	
 	public void refreshPointerRotation(Matching m){
 		ArrayList<JobNode> list=this.retrieveListOnMatch(m);
-		this.pref_pointer=this.pref.indexOf(list.get(list.size()-1));
-		
-		
+		if(list.size()>0){
+			this.pref_pointer=this.pref.indexOf(list.get(list.size()-1));
+		}else{
+			this.pref_pointer=this.pref.indexOf(JobNode.getDummy());
+		}
 	}
-
+	
+	public void refreshPointerRotation(Matching m,JobNode job){
+		ArrayList<JobNode> list=this.retrieveListOnMatch(m);
+		list.remove(job);
+		if(list.size()>0){
+			this.pref_pointer=this.pref.indexOf(list.get(list.size()-1));
+		}else{
+			this.pref_pointer=this.pref.indexOf(JobNode.getDummy());
+		}
+		System.out.println(this.id+" new pointer "+this.pref_pointer);
+	}
 	
 	public int getPref_pointer() {
 		return pref_pointer;
 	}
 
-	
+	public static void refreshMachines(Matching m){
+		for(MachineNode machine : machines){
+			machine.refreshPointerRotation(m);
+		}
+	}
 	
 }

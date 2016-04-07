@@ -27,7 +27,13 @@ public class Edge {
 		return jobs_machines;
 	}
 
-
+	public boolean isEqualReversed(Edge other,int jobs,int machines){
+		if(this.job.id==other.machine.id-jobs&&this.machine.id==other.job.id+machines&&this.current_time==other.current_time){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 
 	public double getCurrent_time() {
