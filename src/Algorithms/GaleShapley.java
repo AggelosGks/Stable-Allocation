@@ -76,7 +76,7 @@ public class GaleShapley {
 																// machines
 			Edge.getEdge(dummy, machine).fillEdge();
 			;// extract relevant edge with dummy job
-			// full arc
+				// full arc
 			match.addEdgeToMatch(dummy, Edge.getEdge(dummy, machine));
 		}
 	}
@@ -89,6 +89,7 @@ public class GaleShapley {
 		createInitialMathcing();
 		while (hasMoreUnassigned()) {
 			JobNode job = extractUnassigned();// extract first unassigned
+
 			// compute machine for proposal
 			double time_left = job.computeLeftTime();// compute left time
 			MachineNode proposal = job.getFirstChoiceForProposal();
@@ -96,8 +97,11 @@ public class GaleShapley {
 			double available = Edge.getEdge(job, proposal).computeAvailableTime();
 			// compute minimum amount that can flow through arc
 			double pro_amount = Math.min(time_left, available);
+			System.out.println("Job: " + job.id + " proposes to " + proposal.id + " amount of : " + pro_amount);
 			if (job.proposeShapley(pro_amount, proposal)) {// acceptance occurs
+				System.out.println("Accepts");
 				HashMap<Node, Double> rejected = proposal.rejectTime(pro_amount, match, job);
+
 				ArrayList<Node> rejections = new ArrayList<Node>();
 				double total = 0;
 				for (Node key : rejected.keySet()) {
@@ -128,22 +132,31 @@ public class GaleShapley {
 				}
 			} else {// rejection occurs
 				job.refreshPointerIndex();
+				System.out.println("Rejection! Job : " + job.id + " refreshes index to "
+						+ job.getPref().get(job.getPref_pointer()).id);
 			}
+			this.match.printMatching();
+			System.out.println(" ");
+			for (MachineNode m : MachineNode.getMachines()) {
+
+				System.out.println("Machine: " + m.id + "LP: " + m.getLeastPrefered().id);
+
+			}
+			System.out.println(" ");
 		}
 	}
-	
-	public void checkPointerAfterExecution(){
-		for(JobNode j : JobNode.getJobs()){
-			System.out.println("O "+j.id+" exei ton"+j.getPref_pointer());
-		}for(MachineNode m : MachineNode.getMachines()){
-			System.out.println("O "+m.id+" exei ton"+m.getPref_pointer());
+
+	public void checkPointerAfterExecution() {
+		for (JobNode j : JobNode.getJobs()) {
+			System.out.println("O " + j.id + " exei ton" + j.getPref_pointer());
+		}
+		for (MachineNode m : MachineNode.getMachines()) {
+			System.out.println("O " + m.id + " exei ton" + m.getPref_pointer());
 		}
 	}
 
 	public BipartiteGraph getGraph() {
 		return graph;
 	}
-	
-	
 
 }

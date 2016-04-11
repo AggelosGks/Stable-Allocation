@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-
-
 public class MachineNode extends Node {
 	private static MachineNode dummy;
 	// static fields
@@ -32,19 +30,26 @@ public class MachineNode extends Node {
 														// prefered choice
 	}
 
-	
-	
+	public MachineNode(int id, double upper_cap) {
+		super(id);
+		this.upper_cap = upper_cap;
+		if (!(this.upper_cap == Integer.MAX_VALUE)) {
+			machines.add(this);
+		} else {
+			dummy = this;
+		}
+		this.pref = new ArrayList<JobNode>();// initialize pref list
+		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least
+														// prefered choice
+	}
+
 	public ArrayList<JobNode> getPref() {
 		return pref;
 	}
 
-
-
 	public static void setDummy(MachineNode dummy) {
 		MachineNode.dummy = dummy;
 	}
-
-
 
 	@Override
 	public String toString() {
@@ -89,8 +94,8 @@ public class MachineNode extends Node {
 		}
 		return isprefered;
 	}
-	
-	//not used
+
+	// not used
 	public boolean prefersAccRejinside(JobNode job) {
 		boolean isprefered = false;
 		int index_candidate = pref.indexOf(job);
@@ -109,18 +114,20 @@ public class MachineNode extends Node {
 		JobNode least_pref = pref.get(pref_pointer);
 		return least_pref;
 	}
-	
-	
 
 	public HashMap<Node, Double> rejectTime(double amount, Matching match, JobNode proposed) {
+
 		HashMap<Node, Double> rejected = new HashMap<Node, Double>();
 		JobNode lp = this.getLeastPrefered();
 		double time = Edge.getEdge(lp, this).getCurrent_time();
-		if (time > amount) {
+		if (time > amount) {// proposed amount is less than time on arc with lp
+			System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
 			Edge.getEdge(lp, this).setCurrent_time(time - amount);
 			lp.setTime_consumed(lp.getTime_consumed() - (int) amount);
-			rejected.put(lp, amount);
-		} else if (time == amount) {
+			rejected.put(lp, amount);// least prefered job does not change
+			System.out.println("	Least prefered job does not change");
+
+		} else if (time == amount) {// amount and time on arc with lp are equal
 			Edge.getEdge(lp, this).setCurrent_time(0);
 			// remove edge from matching
 			match.removeEdgeFromMatch(lp, Edge.getEdge(lp, this));
@@ -128,6 +135,8 @@ public class MachineNode extends Node {
 			rejected.put(lp, amount);
 			// least prefered job changes
 			refreshPointerIndex(match, proposed);
+			System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
+			System.out.println("	Least prefered job changes to " + this.getLeastPrefered().id);
 		} else {
 			boolean change_index = false;
 			double rejection = amount;// total amount of rejection
@@ -141,11 +150,13 @@ public class MachineNode extends Node {
 				double assign = Math.max(0, time - rejection);
 				Edge.getEdge(lp, this).setCurrent_time(assign);
 				rejected.put(lp, (double) true_rej);
+				System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
 				if (assign == 0) {// if decreased to zero
 					// remove edge from matching
 					match.removeEdgeFromMatch(lp, Edge.getEdge(lp, this));
 					// least prefered job changes or not
 					change_index = refreshPointerIndex(match, proposed);
+					System.out.println("	Least prefered job changes to " + this.getLeastPrefered().id);
 				}
 				// the new least prefered didnt change
 				if (change_index) {
@@ -157,6 +168,7 @@ public class MachineNode extends Node {
 
 			}
 		}
+
 		return rejected;
 	}
 
@@ -178,17 +190,20 @@ public class MachineNode extends Node {
 																	// exists in
 																	// matching
 			int index = this.pref.indexOf(lest_pref);
-			for (int i = index; i >= 0; i--) {//iterate backwards 
+			for (int i = index; i >= 0; i--) {// iterate backwards
 				JobNode next = this.pref.get(i);
-				if (match.getMatch_edges().get(next) != null) {//find first job that an edge exists
+				if (match.getMatch_edges().get(next) != null) {// find first job
+																// that an edge
+																// exists
 					if (match.getMatch_edges().get(next).contains(Edge.getEdge(next, this))) {
 						this.pref_pointer = this.pref.indexOf(next);
 						int real_index = this.pref_pointer;
 						int pr_index = this.pref.indexOf(proposed);
-						if (real_index < pr_index) {
-							cantchange = true;
-
-							// xeirizesai me mia boolean an mpei to if ***
+						if (real_index < pr_index) {// if next job that is
+													// assigned is most prefered
+													// than proposed
+							cantchange = true;// then pointer can not change
+							this.pref_pointer = this.pref.indexOf(proposed);
 						}
 						break;
 					}
@@ -200,51 +215,51 @@ public class MachineNode extends Node {
 		}
 		return cantchange;
 	}
-	
-	private ArrayList<JobNode> retrieveListOnMatch(Matching match){
-		ArrayList<JobNode> list=new ArrayList<JobNode>();
-		TreeMap<Integer,JobNode> tree=new TreeMap<Integer,JobNode>();
-		for(JobNode job : JobNode.getJobs()){
-			if(match.containsEdge(Edge.getEdge(job,this))){
+
+	private ArrayList<JobNode> retrieveListOnMatch(Matching match) {
+		ArrayList<JobNode> list = new ArrayList<JobNode>();
+		TreeMap<Integer, JobNode> tree = new TreeMap<Integer, JobNode>();
+		for (JobNode job : JobNode.getJobs()) {
+			if (match.containsEdge(Edge.getEdge(job, this))) {
 				tree.put(this.pref.indexOf(job), job);
 			}
 		}
-		while(!tree.isEmpty()){
-			Entry<Integer, JobNode> x=tree.pollFirstEntry();
+		while (!tree.isEmpty()) {
+			Entry<Integer, JobNode> x = tree.pollFirstEntry();
 			list.add(x.getValue());
 		}
 		return list;
-		
+
 	}
-	
-	public void refreshPointerRotation(Matching m){
-		ArrayList<JobNode> list=this.retrieveListOnMatch(m);
-		if(list.size()>0){
-			this.pref_pointer=this.pref.indexOf(list.get(list.size()-1));
-		}else{
-			this.pref_pointer=this.pref.indexOf(JobNode.getDummy());
+
+	public void refreshPointerRotation(Matching m) {
+		ArrayList<JobNode> list = this.retrieveListOnMatch(m);
+		if (list.size() > 0) {
+			this.pref_pointer = this.pref.indexOf(list.get(list.size() - 1));
+		} else {
+			this.pref_pointer = this.pref.indexOf(JobNode.getDummy());
 		}
 	}
-	
-	public void refreshPointerRotation(Matching m,JobNode job){
-		ArrayList<JobNode> list=this.retrieveListOnMatch(m);
+
+	public void refreshPointerRotation(Matching m, JobNode job) {
+		ArrayList<JobNode> list = this.retrieveListOnMatch(m);
 		list.remove(job);
-		if(list.size()>0){
-			this.pref_pointer=this.pref.indexOf(list.get(list.size()-1));
-		}else{
-			this.pref_pointer=this.pref.indexOf(JobNode.getDummy());
+		if (list.size() > 0) {
+			this.pref_pointer = this.pref.indexOf(list.get(list.size() - 1));
+		} else {
+			this.pref_pointer = this.pref.indexOf(JobNode.getDummy());
 		}
-		System.out.println(this.id+" new pointer "+this.pref_pointer);
+		System.out.println(this.id + " new pointer " + this.pref_pointer);
 	}
-	
+
 	public int getPref_pointer() {
 		return pref_pointer;
 	}
 
-	public static void refreshMachines(Matching m){
-		for(MachineNode machine : machines){
+	public static void refreshMachines(Matching m) {
+		for (MachineNode machine : machines) {
 			machine.refreshPointerRotation(m);
 		}
 	}
-	
+
 }

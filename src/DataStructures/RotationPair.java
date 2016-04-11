@@ -12,9 +12,9 @@ public class RotationPair {
 		this.proposed_by = proposed_by;
 		this.amount = amount;
 	}
-	
-	public RotationPair(){
-		
+
+	public RotationPair() {
+
 	}
 
 	public MachineNode getExtracted_from() {
@@ -51,10 +51,8 @@ public class RotationPair {
 
 	@Override
 	public String toString() {
-		return "RotationPair [extracted_from_machine=" + extracted_from.id + ", added_to_machine=" + added_to.id + ", proposed_by_job="
-				+ proposed_by.id + ", amount=" + amount + "]";
+		return "RotationPair [extracted_from_machine=" + extracted_from.id + ", added_to_machine=" + added_to.id
+				+ ", proposed_by_job=" + proposed_by.id + ", amount=" + amount + "]";
 	}
-	
-	
-	
+
 }
