@@ -17,6 +17,11 @@ public class ExposureElliminationAlgorithm {
 		this.rotations = new ArrayList<RotationStructure>();
 	}
 
+	
+	/**
+	 * Implements the rotation procedure.
+	 * The method call stops when no more jobs can get less happier.
+	 */
 	public void execute() {
 		ArrayList<JobNode> jobs = new ArrayList<JobNode>(JobNode.getJobs());// get
 																			// all
@@ -38,10 +43,16 @@ public class ExposureElliminationAlgorithm {
 		}
 	}
 
+	/**
+	 * Return the match of the instace
+	 * @return match
+	 */
+
 	public Matching getMatch() {
 		return match;
 	}
 
+	
 	public static void setRunner(RotationStructure runner) {
 		ExposureElliminationAlgorithm.runner = runner;
 	}

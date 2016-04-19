@@ -21,12 +21,13 @@ import DataStructures.Matching;
 public class Application {
 
 	public static void main(String args[]) throws CloneNotSupportedException {
-		execute(4, 4, 20, 5, false);
+		execute(5,5,100,5,true);
+		
 	}
 
 	public static ArrayList<Integer> readInstance() {
 
-		String Path = "C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\instance.txt";
+		String Path = "C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\instance3.txt";
 		File file = new File(Path);
 		BufferedReader in = null;
 		try {

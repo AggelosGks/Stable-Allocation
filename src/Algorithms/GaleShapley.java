@@ -85,6 +85,9 @@ public class GaleShapley {
 		return match;
 	}
 
+	/**
+	 * Implenents the algorithm procedure.
+	 */
 	public void execute() {
 		createInitialMathcing();
 		while (hasMoreUnassigned()) {
@@ -146,14 +149,7 @@ public class GaleShapley {
 		}
 	}
 
-	public void checkPointerAfterExecution() {
-		for (JobNode j : JobNode.getJobs()) {
-			System.out.println("O " + j.id + " exei ton" + j.getPref_pointer());
-		}
-		for (MachineNode m : MachineNode.getMachines()) {
-			System.out.println("O " + m.id + " exei ton" + m.getPref_pointer());
-		}
-	}
+	
 
 	public BipartiteGraph getGraph() {
 		return graph;

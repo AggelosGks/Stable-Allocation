@@ -53,9 +53,7 @@ public class MainFrame extends javax.swing.JFrame {
 			MenuPanel = new javax.swing.JPanel();
 			SelectionDisplay = new javax.swing.JPanel();
 			SETSDisplay = new javax.swing.JPanel();
-			InstanceComboList = new javax.swing.JComboBox();
 			FinishSelection = new javax.swing.JButton();
-			SetComboList = new javax.swing.JComboBox();
 			DisplayPanel = new javax.swing.JPanel();
 			Initial = new javax.swing.JPanel();
 			GraphPanel = new javax.swing.JPanel();
@@ -75,13 +73,6 @@ public class MainFrame extends javax.swing.JFrame {
 
 			SETSDisplay.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
-			InstanceComboList.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-			InstanceComboList.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					InstanceComboListActionPerformed(evt);
-				}
-			});
-
 			FinishSelection.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
 			FinishSelection.setText("OK");
 			FinishSelection.addActionListener(new java.awt.event.ActionListener() {
@@ -90,52 +81,37 @@ public class MainFrame extends javax.swing.JFrame {
 				}
 			});
 
-			SetComboList.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-			SetComboList.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					SetComboListActionPerformed(evt);
-				}
-			});
-
 			JLabel lblNumberOfJobs = new JLabel("Number of jobs");
 
-			label = new JLabel("New label");
+			lblNumberOfMachines = new JLabel("Number of machines");
 
 			javax.swing.GroupLayout SETSDisplayLayout = new javax.swing.GroupLayout(SETSDisplay);
-			SETSDisplayLayout
-					.setHorizontalGroup(SETSDisplayLayout.createParallelGroup(Alignment.LEADING)
-							.addGroup(SETSDisplayLayout.createSequentialGroup().addGap(58)
-									.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 79,
-											GroupLayout.PREFERRED_SIZE)
-									.addContainerGap(72, Short.MAX_VALUE))
-					.addGroup(
-							SETSDisplayLayout.createSequentialGroup().addContainerGap(31, Short.MAX_VALUE)
-									.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 160,
-											GroupLayout.PREFERRED_SIZE)
-									.addGap(18))
-							.addGroup(Alignment.TRAILING,
-									SETSDisplayLayout.createSequentialGroup().addContainerGap()
-											.addGroup(SETSDisplayLayout.createParallelGroup(Alignment.TRAILING)
-													.addComponent(InstanceComboList, 0, 150, Short.MAX_VALUE)
-													.addComponent(SetComboList, 0, 150, Short.MAX_VALUE))
-											.addGap(49))
-							.addGroup(SETSDisplayLayout.createSequentialGroup().addGap(31)
-									.addComponent(label, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-									.addContainerGap(82, Short.MAX_VALUE)));
-			SETSDisplayLayout
-					.setVerticalGroup(SETSDisplayLayout.createParallelGroup(Alignment.LEADING)
-							.addGroup(SETSDisplayLayout.createSequentialGroup().addContainerGap()
-									.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 17,
-											GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(SetComboList, GroupLayout.PREFERRED_SIZE, 55,
-											GroupLayout.PREFERRED_SIZE)
-									.addGap(22).addComponent(label).addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(InstanceComboList, GroupLayout.PREFERRED_SIZE, 57,
-											GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
-							.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
-							.addGap(79)));
+			SETSDisplayLayout.setHorizontalGroup(
+				SETSDisplayLayout.createParallelGroup(Alignment.TRAILING)
+					.addGroup(SETSDisplayLayout.createSequentialGroup()
+						.addGap(58)
+						.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(72, Short.MAX_VALUE))
+					.addGroup(SETSDisplayLayout.createSequentialGroup()
+						.addContainerGap(31, Short.MAX_VALUE)
+						.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+						.addGap(18))
+					.addGroup(Alignment.LEADING, SETSDisplayLayout.createSequentialGroup()
+						.addGap(31)
+						.addComponent(lblNumberOfMachines, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(37, Short.MAX_VALUE))
+			);
+			SETSDisplayLayout.setVerticalGroup(
+				SETSDisplayLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(SETSDisplayLayout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(lblNumberOfJobs, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+						.addGap(83)
+						.addComponent(lblNumberOfMachines)
+						.addPreferredGap(ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
+						.addComponent(FinishSelection, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+						.addGap(79))
+			);
 			SETSDisplay.setLayout(SETSDisplayLayout);
 
 			SelectionDisplay.add(SETSDisplay, "card3");
@@ -234,14 +210,6 @@ public class MainFrame extends javax.swing.JFrame {
 
 	}
 
-	private void SetComboListActionPerformed(java.awt.event.ActionEvent evt) {
-
-	}
-
-	private void InstanceComboListActionPerformed(java.awt.event.ActionEvent evt) {
-
-	}
-
 	/**
 	 * @param args
 	 *            the command line arguments
@@ -252,16 +220,14 @@ public class MainFrame extends javax.swing.JFrame {
 	private javax.swing.JPanel DisplayPanel;
 	private javax.swing.JButton FinishSelection;
 	private javax.swing.JPanel Initial;
-	private javax.swing.JComboBox InstanceComboList;
 	private javax.swing.JPanel MenuPanel;
 	private javax.swing.JPanel OutputPanel;
 	private javax.swing.JPanel SETSDisplay;
 	private javax.swing.JPanel SelectionDisplay;
-	private javax.swing.JComboBox SetComboList;
 	private javax.swing.JPanel jPanel1;
-	private JLabel label;
+	private JLabel lblNumberOfMachines;
 
 	public JLabel getLabel() {
-		return label;
+		return lblNumberOfMachines;
 	}
 }
