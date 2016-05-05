@@ -34,6 +34,7 @@ public class ExposureElliminationAlgorithm {
 			System.out.println(" ");
 			System.out.println(" ");
 			runner.elliminateStructure(match);
+			match.printMatching();
 			rotations.add(runner);
 			runner = null;
 			for (MachineNode mach : MachineNode.getMachines()) {

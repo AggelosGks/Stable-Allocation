@@ -2,7 +2,9 @@ package Algorithms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeMap;
 
 import DataStructures.BipartiteGraph;
 import DataStructures.Edge;
@@ -17,6 +19,11 @@ public class Instance {
 	public final int max_time;
 	public final int min_time;
 	private static BipartiteGraph graph;
+	private ArrayList<JobNode> jobs;
+	private ArrayList<MachineNode> machines;
+	private TreeMap<Integer, ArrayList<Edge>> edges;
+	private JobNode dummyJ;
+	private MachineNode dummyM;
 
 	public Instance(int j, int m, int max, int min) {
 		this.j = j;
@@ -34,9 +41,35 @@ public class Instance {
 		return graph;
 	}
 
+	
+	public void saveInstace(){
+		this.jobs=new ArrayList<JobNode>(JobNode.getJobs());
+		this.machines=new ArrayList<MachineNode>(MachineNode.getMachines());
+		this.edges=new TreeMap<Integer, ArrayList<Edge>>(Edge.getJobsMachines());
+		this.dummyJ=JobNode.getDummy();
+		this.dummyM=MachineNode.getDummy();
+	}
+	
+	public void reSwapInstance(){
+		this.clearInstance();
+		for(JobNode j : jobs){
+			JobNode.getJobs().add(j);
+		}
+		for(MachineNode j : machines){
+			MachineNode.getMachines().add(j);
+		}
+		while(!edges.isEmpty()){
+			Entry<Integer, ArrayList<Edge>> entry=edges.pollFirstEntry();
+			Edge.getJobsMachines().put(entry.getKey(),entry.getValue());
+		}
+		JobNode.setDummy(dummyJ);
+		MachineNode.setDummy(dummyM);
+	}
+	
 	public BipartiteGraph SwapInstance() {
 		ArrayList<JobNode> or_jobs = new ArrayList<JobNode>(JobNode.getJobs());
 		ArrayList<MachineNode> or_machines = new ArrayList<MachineNode>(MachineNode.getMachines());
+		this.saveInstace();
 		this.clearInstance();
 		JobNode.createDummyJob();
 		MachineNode.createDummyMachine();
@@ -681,6 +714,7 @@ public class Instance {
 		int no_j = values.get(0);
 		int no_m = values.get(1);
 		System.out.println(no_j);
+		System.out.println(no_m);
 		values.remove(0);
 		values.remove(0);
 		System.out.println("-----------------------------");
@@ -724,6 +758,12 @@ public class Instance {
 					data.clear();
 				}
 			}
+		}
+		for(JobNode job : JobNode.getJobs()){
+			System.out.println(job.id);
+		}
+		for (MachineNode machine : MachineNode.getMachines()){
+			System.out.println(machine.id);
 		}
 
 		for (JobNode job : JobNode.getJobs()) {

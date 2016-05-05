@@ -177,7 +177,7 @@ public class JobNode extends Node {
 
 			int index = this.pref.indexOf(machine);// get index on preflist
 			MachineNode next = this.pref.get(index + 1);
-			System.out.println("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount);
+			System.out.println("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
 			if (!next.isDummy()) {
 				double available_amount = extractFeasibleAmount(next, amount);
 				if (this.proposeExp_Ell(available_amount, next)) {// if machine
@@ -193,8 +193,7 @@ public class JobNode extends Node {
 					while (rotation.isOpen()) {
 
 						MachineNode first_rejection = rotation.retrieveFirstRejectedMachine();
-						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),
-								match, first_rejection);
+						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match, first_rejection);
 						if (next_pair == null) {// this code of if is obselet
 							rotation.close();
 						} else {
@@ -241,19 +240,8 @@ public class JobNode extends Node {
 		return pair;
 	}
 
-	public double extractFeasibleAmount(MachineNode next, double amount) {// amount
-																			// is
-																			// the
-																			// amount
-																			// of
-																			// proposal
-		double avail = Edge.getEdge(this, next).computeAvailableTime();// available
-																		// time
-																		// to
-																		// add
-																		// with
-																		// machine
-																		// proposed
+	public double extractFeasibleAmount(MachineNode next, double amount) {
+		double avail = Edge.getEdge(this, next).computeAvailableTime();
 		double feasible = Math.min(amount, avail);
 		double rejected = Edge.getEdge(next.getLeastPrefered(), next).getCurrent_time();
 		return Math.min(feasible, rejected); // minimum of two amounts
@@ -283,5 +271,7 @@ public class JobNode extends Node {
 	public int getPref_pointer() {
 		return pref_pointer;
 	}
+	
+	
 
 }

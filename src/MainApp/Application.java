@@ -21,7 +21,7 @@ import DataStructures.Matching;
 public class Application {
 
 	public static void main(String args[]) throws CloneNotSupportedException {
-		execute(5,5,100,5,true);
+		execute(3,3,10,5,false);
 		
 	}
 
@@ -59,18 +59,24 @@ public class Application {
 
 	public static void writeInstance() {
 		ArrayList<Integer> values = new ArrayList<Integer>();
+		values.add(JobNode.getJobs().size());
+		values.add(MachineNode.getMachines().size());
 		for (JobNode job : JobNode.getJobs()) {
 			values.add(job.id);
 			values.add((int) job.proc_time);
 			for (MachineNode machine : job.getPref()) {
-				values.add(machine.id);
+				if(!machine.isDummy()){
+					values.add(machine.id);
+				}
 			}
 		}
 		for (MachineNode mach : MachineNode.getMachines()) {
 			values.add(mach.id);
 			values.add((int) mach.upper_cap);
 			for (JobNode job : mach.getPref()) {
-				values.add(job.id);
+				if(!job.isDummy()){
+					values.add(job.id);
+				}
 			}
 		}
 
@@ -98,11 +104,13 @@ public class Application {
 
 	public static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
 		Instance i = new Instance(jobs, machines, max_time, min_time);
-		BipartiteGraph graph = i.createInstance();
+		BipartiteGraph graph = i.createTextInstance(readInstance());
 		i.testInstanceIntegration();
 		Matching job_optimal = executeShapleyJobOrieented(graph, print);
-		job_optimal = executeRotations(job_optimal, print);
 		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);
+		i.reSwapInstance();
+		i.testInstanceIntegration();
+		job_optimal = executeRotations(job_optimal, print);
 		testCorrectness(job_optimal, machine_optimal);
 
 	}
