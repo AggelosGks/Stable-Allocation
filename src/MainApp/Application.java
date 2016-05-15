@@ -12,8 +12,9 @@ import java.util.ArrayList;
 import Algorithms.ExposureElliminationAlgorithm;
 import Algorithms.GaleShapley;
 import Algorithms.Instance;
+import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
-
+import DataStructures.Edge;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
@@ -102,11 +103,12 @@ public class Application {
 
 	}
 
-	public static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
+	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
 		Instance i = new Instance(jobs, machines, max_time, min_time);
 		BipartiteGraph graph = i.createTextInstance(readInstance());
 		i.testInstanceIntegration();
 		Matching job_optimal = executeShapleyJobOrieented(graph, print);
+		LinearProgramm.addValuesJopt(job_optimal);
 		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);
 		i.reSwapInstance();
 		i.testInstanceIntegration();
@@ -117,9 +119,7 @@ public class Application {
 
 	public static Matching executeShapleyJobOrieented(BipartiteGraph graph, boolean print) {
 		GaleShapley algorithm = new GaleShapley(graph);
-
 		algorithm.execute();
-
 		System.out.println("---------------JOB OPTIMAL SHAPLEY---------------");
 		algorithm.getMatch().printMatching();
 		System.out.println("--------------------------------------------------");
@@ -128,7 +128,7 @@ public class Application {
 		return algorithm.getMatch();
 	}
 
-	public static Matching executeRotations(Matching job_optimal, boolean print) {
+	private static Matching executeRotations(Matching job_optimal, boolean print) {
 		ExposureElliminationAlgorithm exp = new ExposureElliminationAlgorithm(job_optimal);
 
 		exp.execute();
@@ -141,7 +141,7 @@ public class Application {
 		return exp.getMatch();
 	}
 
-	public static Matching executeShapleyMachinesOrieented(Instance instance, boolean print) {
+	private static Matching executeShapleyMachinesOrieented(Instance instance, boolean print) {
 		GaleShapley inversed = new GaleShapley(instance.SwapInstance());
 		instance.testInstanceIntegration();
 		inversed.execute();
@@ -149,7 +149,7 @@ public class Application {
 		return inversed.getMatch();
 	}
 
-	public static void testCorrectness(Matching job_optimal, Matching machine_optimal) {
+	private static void testCorrectness(Matching job_optimal, Matching machine_optimal) {
 		if (machine_optimal.areEqual(job_optimal)) {
 			System.out.println("Yes");
 		} else {
@@ -157,5 +157,6 @@ public class Application {
 			System.out.println("No");
 		}
 	}
-
+	
+	
 }

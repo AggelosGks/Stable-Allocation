@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import Algorithms.Instance;
+import Computation.Info;
+import Computation.LinearProgramm;
 
 //Each rotation structure instance actually implements a full rotation exposure and ellimination.
 //It contains a list of RotationPairs and a priorityqueue that manipulates the termination criteria.
@@ -79,51 +81,36 @@ public class RotationStructure {
 				minimum_amount = pair.getAmount();
 			}
 		}
+		// get job that got worst
 		for (RotationPair pair : this.pairs) {
-			JobNode proposed_by = pair.getProposed_by();// get job that got
-														// worst
-			MachineNode abstracted = pair.getExtracted_from();// get machinenode
-																// that amount
-																// was extracted
-																// from
-			MachineNode added = pair.getAdded_to();// get machinenode that
-													// amount was added to
-			double current_time = Edge.getEdge(proposed_by, abstracted).getCurrent_time();// get
-																							// current
-																							// amount
-																							// of
-																							// time
-																							// between
-																							// job
-																							// and
-																							// abstracted
-			Edge.getEdge(proposed_by, abstracted).setCurrent_time(current_time - minimum_amount);// set
-																									// new
-																									// amount
-			if (Edge.getEdge(proposed_by, abstracted).getCurrent_time() == 0) {// delete
-																				// if
-																				// empty
+			JobNode proposed_by = pair.getProposed_by();
+			// get machinenode that amount was extracted from
+			MachineNode abstracted = pair.getExtracted_from();
+			// get machinenode that  amount was added to
+			MachineNode added = pair.getAdded_to();
+			// get current amount of time between job and abstracted
+			double current_time = Edge.getEdge(proposed_by, abstracted).getCurrent_time();
+			//set new amount
+			Edge.getEdge(proposed_by, abstracted).setCurrent_time(current_time - minimum_amount);
+			//add rotation for edge
+			LinearProgramm.initInfoAbstraction(Edge.getEdge(proposed_by, abstracted));
+			LinearProgramm.addInfoAbstraction(Edge.getEdge(proposed_by, abstracted),this,minimum_amount);
+			//delete if empty
+			if (Edge.getEdge(proposed_by, abstracted).getCurrent_time() == 0) {
 				m.removeEdgeFromMatch(Edge.getEdge(proposed_by, abstracted).getJob(),
-						Edge.getEdge(proposed_by, abstracted));
-
+				Edge.getEdge(proposed_by, abstracted));
 			}
-
-			current_time = Edge.getEdge(proposed_by, added).getCurrent_time();// get
-																				// time
-																				// one
-																				// edge
-																				// between
-																				// job
-																				// and
-																				// added
-			Edge.getEdge(proposed_by, added).setCurrent_time(current_time + minimum_amount);// add
-																							// new
-																							// amount
-			if (!m.containsEdge(Edge.getEdge(proposed_by, added))) {// if edge
-																	// not in
-																	// match add
-																	// it
+			
+			//get time on edge between job and added
+			current_time = Edge.getEdge(proposed_by, added).getCurrent_time();
+			//add new amount
+			Edge.getEdge(proposed_by, added).setCurrent_time(current_time + minimum_amount);
+			//if edge not in match add it
+			LinearProgramm.initInfoAddition(Edge.getEdge(proposed_by, added));
+			LinearProgramm.addInfoAddition(Edge.getEdge(proposed_by, added),this,minimum_amount);
+			if (!m.containsEdge(Edge.getEdge(proposed_by, added))) {
 				m.addEdgeToMatch(Edge.getEdge(proposed_by, added).getJob(), Edge.getEdge(proposed_by, added));
+				
 			}
 			added.refreshPointerIndex(m, proposed_by);
 			// abstracted.refreshPointerRotation(m);

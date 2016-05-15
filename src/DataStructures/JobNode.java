@@ -155,35 +155,20 @@ public class JobNode extends Node {
 	}
 
 	public boolean canGetWorse2(Matching match) {
-
 		RotationPair pair = null;
 		boolean can = false;
-		ArrayList<MachineNode> machines = this.getListAssignedtoMatch(match);// get
-																				// all
-																				// machines
-																				// that
-																				// currently
-																				// assigned
-																				// to
-																				// match
-																				// with
-																				// this
-																				// job
+		//get all machines that current assinged to match with this job
+		ArrayList<MachineNode> machines = this.getListAssignedtoMatch(match);
 		for (MachineNode machine : machines) {// iterate machines
-			double amount = Edge.getEdge(this, machine).getCurrent_time();// get
-																			// time
-																			// on
-																			// edge
-
+			//get time on edge
+			double amount = Edge.getEdge(this, machine).getCurrent_time();
 			int index = this.pref.indexOf(machine);// get index on preflist
 			MachineNode next = this.pref.get(index + 1);
 			System.out.println("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
 			if (!next.isDummy()) {
 				double available_amount = extractFeasibleAmount(next, amount);
-				if (this.proposeExp_Ell(available_amount, next)) {// if machine
-																	// accepts
-																	// begin
-																	// rotation
+				//if machine accept rotation begins
+				if (this.proposeExp_Ell(available_amount, next)) {
 					System.out.println("Machine: " + next.id + " accepts");
 					pair = new RotationPair(machine, next, this, available_amount);
 					System.out.println("Pair: " + pair.toString());
@@ -191,10 +176,9 @@ public class JobNode extends Node {
 					JobNode rejected = rotation.addPair(pair, match);
 					System.out.println("Rejected from machine: " + next.id + " is Job: " + rejected.id);
 					while (rotation.isOpen()) {
-
 						MachineNode first_rejection = rotation.retrieveFirstRejectedMachine();
 						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match, first_rejection);
-						if (next_pair == null) {// this code of if is obselet
+						if (next_pair == null) {
 							rotation.close();
 						} else {
 							System.out.println("			Next Pair: " + next_pair.toString());
@@ -204,11 +188,9 @@ public class JobNode extends Node {
 								rotation.close();
 								System.out.println("--------------> " + rotation.revealQueueStatus());
 								if (rotation.existsAandC(rejected)) {
-
 									can = true;
-									ExposureElliminationAlgorithm.setRunner(rotation);// save
-																						// last
-																						// rotation
+									//save llast rotation
+									ExposureElliminationAlgorithm.setRunner(rotation);
 								}
 							}
 						}

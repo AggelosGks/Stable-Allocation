@@ -20,7 +20,7 @@ public class ExposureElliminationAlgorithm {
 	
 	/**
 	 * Implements the rotation procedure.
-	 * The method call stops when no more jobs can get less happier.
+	 * The method execution stops when no more jobs can get less happier.
 	 */
 	public void execute() {
 		ArrayList<JobNode> jobs = new ArrayList<JobNode>(JobNode.getJobs());// get
