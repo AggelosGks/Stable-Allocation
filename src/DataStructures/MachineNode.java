@@ -3,6 +3,9 @@ package DataStructures;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import MainApp.Application;
+
 import java.util.TreeMap;
 
 public class MachineNode extends Node {
@@ -121,12 +124,11 @@ public class MachineNode extends Node {
 		JobNode lp = this.getLeastPrefered();
 		double time = Edge.getEdge(lp, this).getCurrent_time();
 		if (time > amount) {// proposed amount is less than time on arc with lp
-			System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
+			Application.STEPS_IN_TEXT.add("    Machine: " + this.id + " rejects time from: " + lp.id);
 			Edge.getEdge(lp, this).setCurrent_time(time - amount);
 			lp.setTime_consumed(lp.getTime_consumed() - (int) amount);
 			rejected.put(lp, amount);// least prefered job does not change
-			System.out.println("	Least prefered job does not change");
-
+			Application.STEPS_IN_TEXT.add("	Least prefered job does not change");
 		} else if (time == amount) {// amount and time on arc with lp are equal
 			Edge.getEdge(lp, this).setCurrent_time(0);
 			// remove edge from matching
@@ -135,8 +137,8 @@ public class MachineNode extends Node {
 			rejected.put(lp, amount);
 			// least prefered job changes
 			refreshPointerIndex(match, proposed);
-			System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
-			System.out.println("	Least prefered job changes to " + this.getLeastPrefered().id);
+			Application.STEPS_IN_TEXT.add("    Machine: " + this.id + " rejects time from: " + lp.id);
+			Application.STEPS_IN_TEXT.add("	Least prefered job changes to " + this.getLeastPrefered().id);
 		} else {
 			boolean change_index = false;
 			double rejection = amount;// total amount of rejection
@@ -150,13 +152,13 @@ public class MachineNode extends Node {
 				double assign = Math.max(0, time - rejection);
 				Edge.getEdge(lp, this).setCurrent_time(assign);
 				rejected.put(lp, (double) true_rej);
-				System.out.println("    Machine: " + this.id + " rejects time from: " + lp.id);
+				Application.STEPS_IN_TEXT.add("    Machine: " + this.id + " rejects time from: " + lp.id);
 				if (assign == 0) {// if decreased to zero
 					// remove edge from matching
 					match.removeEdgeFromMatch(lp, Edge.getEdge(lp, this));
 					// least prefered job changes or not
 					change_index = refreshPointerIndex(match, proposed);
-					System.out.println("	Least prefered job changes to " + this.getLeastPrefered().id);
+					Application.STEPS_IN_TEXT.add("	Least prefered job changes to " + this.getLeastPrefered().id);
 				}
 				// the new least prefered didnt change
 				if (change_index) {
@@ -249,7 +251,7 @@ public class MachineNode extends Node {
 		} else {
 			this.pref_pointer = this.pref.indexOf(JobNode.getDummy());
 		}
-		System.out.println(this.id + " new pointer " + this.pref_pointer);
+		Application.STEPS_IN_TEXT.add(this.id + " new pointer " + this.pref_pointer);
 	}
 
 	public int getPref_pointer() {

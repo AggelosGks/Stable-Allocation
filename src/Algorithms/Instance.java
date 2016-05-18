@@ -233,13 +233,15 @@ public class Instance {
 	}
 
 	public void testInstanceIntegration() {
+		System.out.println("----------------------------------------------------------------------------");
 		for (JobNode j : JobNode.getJobs()) {
 			System.out.println(j.toString());
 		}
-		System.out.println("-------------------------------");
+		System.out.println("----------------------------------------------------------------------------");
 		for (MachineNode m : MachineNode.getMachines()) {
 			System.out.println(m.toString());
 		}
+		System.out.println("----------------------------------------------------------------------------");
 	}
 
 	public static int[] sumNumbers(int number, int parts) {
@@ -713,12 +715,8 @@ public class Instance {
 		MachineNode.createDummyMachine();
 		int no_j = values.get(0);
 		int no_m = values.get(1);
-		System.out.println(no_j);
-		System.out.println(no_m);
 		values.remove(0);
 		values.remove(0);
-		System.out.println("-----------------------------");
-
 		boolean jobs = true;
 
 		int lines_job = no_m + 2;
@@ -758,12 +756,6 @@ public class Instance {
 					data.clear();
 				}
 			}
-		}
-		for(JobNode job : JobNode.getJobs()){
-			System.out.println(job.id);
-		}
-		for (MachineNode machine : MachineNode.getMachines()){
-			System.out.println(machine.id);
 		}
 
 		for (JobNode job : JobNode.getJobs()) {

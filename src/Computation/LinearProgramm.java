@@ -36,4 +36,22 @@ public class LinearProgramm {
 			jopt_values.put(e, e.getCurrent_time());
 		}
 	}
+	
+	public static void printAllEdgeInfo(){
+		System.out.println("ADDITION");
+		for(Edge edge : added.keySet()){
+			System.out.println("J"+edge.getJob().id+" M"+edge.getMachine().id);
+			for(Info info : added.get(edge)){
+				info.revealInfo();
+			}
+		}
+		System.out.println("ABSTRACTION");
+		for(Edge edge : abstracted.keySet()){
+			System.out.println("J"+edge.getJob().id+" M"+edge.getMachine().id);
+			for(Info info : abstracted.get(edge)){
+				info.revealInfo();
+			}
+		}
+		
+	}
 }

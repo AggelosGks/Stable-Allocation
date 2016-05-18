@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import Algorithms.ExposureElliminationAlgorithm;
+import MainApp.Application;
 
 public class JobNode extends Node {
 	private static final ArrayList<JobNode> jobs = new ArrayList<JobNode>();// total
@@ -164,29 +165,29 @@ public class JobNode extends Node {
 			double amount = Edge.getEdge(this, machine).getCurrent_time();
 			int index = this.pref.indexOf(machine);// get index on preflist
 			MachineNode next = this.pref.get(index + 1);
-			System.out.println("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
+			Application.STEPS_IN_TEXT.add("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
 			if (!next.isDummy()) {
 				double available_amount = extractFeasibleAmount(next, amount);
 				//if machine accept rotation begins
 				if (this.proposeExp_Ell(available_amount, next)) {
-					System.out.println("Machine: " + next.id + " accepts");
+					Application.STEPS_IN_TEXT.add("Machine: " + next.id + " accepts");
 					pair = new RotationPair(machine, next, this, available_amount);
-					System.out.println("Pair: " + pair.toString());
+					Application.STEPS_IN_TEXT.add("Pair: " + pair.toString());
 					RotationStructure rotation = new RotationStructure();
 					JobNode rejected = rotation.addPair(pair, match);
-					System.out.println("Rejected from machine: " + next.id + " is Job: " + rejected.id);
+					Application.STEPS_IN_TEXT.add("Rejected from machine: " + next.id + " is Job: " + rejected.id);
 					while (rotation.isOpen()) {
 						MachineNode first_rejection = rotation.retrieveFirstRejectedMachine();
 						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match, first_rejection);
 						if (next_pair == null) {
 							rotation.close();
 						} else {
-							System.out.println("			Next Pair: " + next_pair.toString());
+							Application.STEPS_IN_TEXT.add("			Next Pair: " + next_pair.toString());
 							rejected = rotation.addPair(next_pair, match);
-							System.out.println("			REJECTED IS : " + rejected.id);
+							Application.STEPS_IN_TEXT.add("			REJECTED IS : " + rejected.id);
 							if (rotation.containsNode(rejected.id)) {
 								rotation.close();
-								System.out.println("--------------> " + rotation.revealQueueStatus());
+								Application.STEPS_IN_TEXT.add("Queue--------------> " + rotation.revealQueueStatus());
 								if (rotation.existsAandC(rejected)) {
 									can = true;
 									//save llast rotation

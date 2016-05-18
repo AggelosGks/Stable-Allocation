@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import Algorithms.Instance;
-import Computation.Info;
 import Computation.LinearProgramm;
+import MainApp.Application;
 
 //Each rotation structure instance actually implements a full rotation exposure and ellimination.
 //It contains a list of RotationPairs and a priorityqueue that manipulates the termination criteria.
@@ -199,15 +199,23 @@ public class RotationStructure {
 		this.queue.clear();
 	}
 
+	
+	
+	public ArrayList<RotationPair> getPairs() {
+		return pairs;
+	}
+
 	@Override
 	public String toString() {
 		String x = "";
 		for (RotationPair pair : this.pairs) {
 			System.out.println(pair.toString());
+			Application.STEPS_IN_TEXT.add(pair.toString());
 		}
 		return x;
 	}
 
+	
 	private class RotationNode implements Comparable<RotationNode> {
 
 		public final int node_id;

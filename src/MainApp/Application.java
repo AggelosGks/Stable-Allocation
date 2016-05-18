@@ -8,21 +8,23 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import Algorithms.ExposureElliminationAlgorithm;
 import Algorithms.GaleShapley;
 import Algorithms.Instance;
 import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
-import DataStructures.Edge;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
 
 public class Application {
-
+	
+	public static final ArrayList<String> STEPS_IN_TEXT=new ArrayList<String>();
+	
 	public static void main(String args[]) throws CloneNotSupportedException {
-		execute(3,3,10,5,false);
+		execute(10,10,100,5,false);
 		
 	}
 
@@ -83,7 +85,7 @@ public class Application {
 
 		try {
 			File file = new File(
-					"C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\instance3.txt");
+					"C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\instance5.txt");
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
@@ -105,24 +107,27 @@ public class Application {
 
 	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
 		Instance i = new Instance(jobs, machines, max_time, min_time);
-		BipartiteGraph graph = i.createTextInstance(readInstance());
+		BipartiteGraph graph = i.createInstance();
 		i.testInstanceIntegration();
 		Matching job_optimal = executeShapleyJobOrieented(graph, print);
 		LinearProgramm.addValuesJopt(job_optimal);
 		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);
 		i.reSwapInstance();
+		System.out.println(" ");
 		i.testInstanceIntegration();
 		job_optimal = executeRotations(job_optimal, print);
 		testCorrectness(job_optimal, machine_optimal);
-
+		PrintSteps();
+		LinearProgramm.printAllEdgeInfo();
 	}
 
 	public static Matching executeShapleyJobOrieented(BipartiteGraph graph, boolean print) {
 		GaleShapley algorithm = new GaleShapley(graph);
 		algorithm.execute();
-		System.out.println("---------------JOB OPTIMAL SHAPLEY---------------");
+		System.out.println(" ");
+		System.out.println("---------------JOB OPTIMAL SHAPLEY----------------------");
 		algorithm.getMatch().printMatching();
-		System.out.println("--------------------------------------------------");
+		System.out.println("--------------------------------------------------------");
 		System.out.println("                       ");
 		System.out.println("                       ");
 		return algorithm.getMatch();
@@ -133,9 +138,9 @@ public class Application {
 
 		exp.execute();
 
-		System.out.println("---------------MACHINE OPTIMAL ROTATIONS---------------");
+		System.out.println("---------------MACHINE OPTIMAL ROTATIONS-----------------");
 		exp.getMatch().printMatching();
-		System.out.println("--------------------------------------------------");
+		System.out.println("---------------------------------------------------------");
 		System.out.println("                       ");
 		System.out.println("                       ");
 		return exp.getMatch();
@@ -156,6 +161,18 @@ public class Application {
 			writeInstance();
 			System.out.println("No");
 		}
+	}
+	
+	private static void PrintSteps(){
+		System.out.println("Print Steps?");
+		Scanner input=new Scanner(System.in);
+		String in=input.nextLine();
+		if(in.equals("")){
+			for(String line : STEPS_IN_TEXT){
+				System.out.println(line);
+			}
+		}
+		input.close();
 	}
 	
 	

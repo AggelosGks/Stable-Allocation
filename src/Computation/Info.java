@@ -1,6 +1,7 @@
 package Computation;
 
 
+import DataStructures.RotationPair;
 import DataStructures.RotationStructure;
 
 public class Info {
@@ -19,6 +20,12 @@ public class Info {
 	public double getDistr_amount() {
 		return distr_amount;
 	}
-
+	
+	public void revealInfo(){
+		for(RotationPair pair : this.rotation.getPairs()){
+			System.out.println(pair.toString());
+		}
+		System.out.println(this.distr_amount);
+	}
 	
 }

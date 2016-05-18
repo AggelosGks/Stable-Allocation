@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import MainApp.Application;
+
 public class Matching {
 	private HashMap<Node, ArrayList<Edge>> match_edges;
 
@@ -42,6 +44,16 @@ public class Matching {
 			System.out.println("J " + node.id);
 			for (Edge e : edges) {
 				System.out.println(e.toString());
+			}
+		}
+	}
+	public void saveMatching() {
+		for (Map.Entry<Node, ArrayList<Edge>> entry : match_edges.entrySet()) {
+			Node node = entry.getKey();
+			ArrayList<Edge> edges = entry.getValue();
+			Application.STEPS_IN_TEXT.add("J " + node.id);
+			for (Edge e : edges) {
+				Application.STEPS_IN_TEXT.add(e.toString());
 			}
 		}
 	}

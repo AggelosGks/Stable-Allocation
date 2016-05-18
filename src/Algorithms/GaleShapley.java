@@ -9,6 +9,7 @@ import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
 import DataStructures.Node;
+import MainApp.Application;
 
 public class GaleShapley {
 	private ArrayList<JobNode> jobs_unassigned;
@@ -100,11 +101,12 @@ public class GaleShapley {
 			double available = Edge.getEdge(job, proposal).computeAvailableTime();
 			// compute minimum amount that can flow through arc
 			double pro_amount = Math.min(time_left, available);
-			System.out.println("Job: " + job.id + " proposes to " + proposal.id + " amount of : " + pro_amount);
+			Application.STEPS_IN_TEXT.add("-------------------------------------------------------");
+			Application.STEPS_IN_TEXT.add("-------------------------------------------------------");
+			Application.STEPS_IN_TEXT.add("Job: " + job.id + " proposes to " + proposal.id + " amount of : " + pro_amount);
 			if (job.proposeShapley(pro_amount, proposal)) {// acceptance occurs
-				System.out.println("Accepts");
+				Application.STEPS_IN_TEXT.add("Accepts");
 				HashMap<Node, Double> rejected = proposal.rejectTime(pro_amount, match, job);
-
 				ArrayList<Node> rejections = new ArrayList<Node>();
 				double total = 0;
 				for (Node key : rejected.keySet()) {
@@ -135,18 +137,18 @@ public class GaleShapley {
 				}
 			} else {// rejection occurs
 				job.refreshPointerIndex();
-				System.out.println("Rejection! Job : " + job.id + " refreshes index to "
+				Application.STEPS_IN_TEXT.add("Rejection! Job : " + job.id + " refreshes index to "
 						+ job.getPref().get(job.getPref_pointer()).id);
 			}
-			this.match.printMatching();
-			System.out.println(" ");
+			this.match.saveMatching();
+			Application.STEPS_IN_TEXT.add(" ");
 			for (MachineNode m : MachineNode.getMachines()) {
-
-				System.out.println("Machine: " + m.id + "LP: " + m.getLeastPrefered().id);
-
+				Application.STEPS_IN_TEXT.add("Machine: " + m.id + "LP: " + m.getLeastPrefered().id);
 			}
-			System.out.println(" ");
+			
 		}
+		Application.STEPS_IN_TEXT.add("-------------------------------------------------------");
+		Application.STEPS_IN_TEXT.add("-------------------------------------------------------");
 	}
 
 	

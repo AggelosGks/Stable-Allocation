@@ -6,6 +6,7 @@ import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Matching;
 import DataStructures.RotationStructure;
+import MainApp.Application;
 
 public class ExposureElliminationAlgorithm {
 	private Matching match;// the matching the algorithm is applied to
@@ -23,18 +24,22 @@ public class ExposureElliminationAlgorithm {
 	 * The method execution stops when no more jobs can get less happier.
 	 */
 	public void execute() {
-		ArrayList<JobNode> jobs = new ArrayList<JobNode>(JobNode.getJobs());// get
-																			// all
-																			// jobs
+		//get jobs
+		ArrayList<JobNode> jobs = new ArrayList<JobNode>(JobNode.getJobs());
+		Application.STEPS_IN_TEXT.add("                       ROTATIONS                  ");
+		Application.STEPS_IN_TEXT.add(" ");
 		MachineNode.refreshMachines(match);
 		while (decreaseExists(jobs, this.match)) {
-			System.out.println("----------------------------------------");
-			runner.toString();
-			System.out.println("----------------------------------------");
+			System.out.println("--------------------------------------------------------------");
+			Application.STEPS_IN_TEXT.add("-------------------------------------------------------------------");
+			Application.STEPS_IN_TEXT.add(runner.toString());
+			System.out.println("--------------------------------------------------------------");
+			Application.STEPS_IN_TEXT.add("-------------------------------------------------------------------");
 			System.out.println(" ");
+			Application.STEPS_IN_TEXT.add(" ");
 			System.out.println(" ");
+			Application.STEPS_IN_TEXT.add(" ");
 			runner.elliminateStructure(match);
-			match.printMatching();
 			rotations.add(runner);
 			runner = null;
 			for (MachineNode mach : MachineNode.getMachines()) {
