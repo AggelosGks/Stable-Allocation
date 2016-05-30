@@ -13,6 +13,7 @@ import java.util.Scanner;
 import Algorithms.ExposureElliminationAlgorithm;
 import Algorithms.GaleShapley;
 import Algorithms.Instance;
+import Algorithms.PosetGraphAlgorithm;
 import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
 import DataStructures.JobNode;
@@ -24,7 +25,7 @@ public class Application {
 	public static final ArrayList<String> STEPS_IN_TEXT=new ArrayList<String>();
 	
 	public static void main(String args[]) throws CloneNotSupportedException {
-		execute(10,10,100,5,false);
+		execute(5,5,100,5,false);
 		
 	}
 
@@ -107,7 +108,7 @@ public class Application {
 
 	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
 		Instance i = new Instance(jobs, machines, max_time, min_time);
-		BipartiteGraph graph = i.createInstance();
+		BipartiteGraph graph = i.createReadyInst5();
 		i.testInstanceIntegration();
 		Matching job_optimal = executeShapleyJobOrieented(graph, print);
 		LinearProgramm.addValuesJopt(job_optimal);
@@ -118,6 +119,8 @@ public class Application {
 		job_optimal = executeRotations(job_optimal, print);
 		testCorrectness(job_optimal, machine_optimal);
 		PrintSteps();
+		PosetGraphAlgorithm poset=new PosetGraphAlgorithm();
+		
 		LinearProgramm.printAllEdgeInfo();
 	}
 
@@ -147,7 +150,7 @@ public class Application {
 	}
 
 	private static Matching executeShapleyMachinesOrieented(Instance instance, boolean print) {
-		GaleShapley inversed = new GaleShapley(instance.SwapInstance());
+		GaleShapley inversed = new GaleShapley(instance.SwapInstance2());
 		instance.testInstanceIntegration();
 		inversed.execute();
 		inversed.getMatch().printMatchingSwaped();

@@ -45,8 +45,12 @@ public class ExposureElliminationAlgorithm {
 			for (MachineNode mach : MachineNode.getMachines()) {
 				mach.refreshPointerRotation(match);
 			}
-
 		}
+		for(RotationStructure rot : rotations){
+			int id=rotations.indexOf(rot)+1;
+			rot.setId(id);
+		}
+		PosetGraphAlgorithm.setRotations_order(this.rotations);
 	}
 
 	/**
@@ -73,7 +77,7 @@ public class ExposureElliminationAlgorithm {
 	public boolean decreaseExists(ArrayList<JobNode> jobs, Matching match) {
 		boolean decrease = false;
 		for (JobNode job : jobs) {
-			if (job.canGetWorse2(match)) {
+			if (job.canGetWorse(match)) {
 				decrease = true;
 				break;
 			}

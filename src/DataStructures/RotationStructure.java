@@ -12,13 +12,14 @@ import MainApp.Application;
 //Each rotation structure instance actually implements a full rotation exposure and ellimination.
 //It contains a list of RotationPairs and a priorityqueue that manipulates the termination criteria.
 public class RotationStructure {
-
+	public int id;
 	private PriorityQueue<RotationNode> queue;
 	private ArrayList<RotationPair> pairs;
 	private int elements;
 	private boolean open;
 
 	public RotationStructure() {
+		this.id=0;
 		this.pairs = new ArrayList<RotationPair>();
 		this.queue = new PriorityQueue<RotationNode>();
 		this.elements = 1;
@@ -199,8 +200,7 @@ public class RotationStructure {
 		this.queue.clear();
 	}
 
-	
-	
+
 	public ArrayList<RotationPair> getPairs() {
 		return pairs;
 	}
@@ -215,7 +215,45 @@ public class RotationStructure {
 		return x;
 	}
 
+	public ArrayList<Node> getPartitionListed(){
+		ArrayList<Node> partition=new ArrayList<Node>();
+		for(RotationPair pair : this.pairs){
+			partition.add(pair.getAdded_to());
+			partition.add(pair.getProposed_by());
+		}
+		return partition;
+	}
 	
+	public RotationPair extractPairOfAdded(MachineNode machine){
+		RotationPair pair_r=null;
+		for(RotationPair pair:this.pairs){
+			if(pair.getAdded_to().id==machine.id){
+				pair_r=pair;
+				break;
+			}
+		}
+		return pair_r;
+	}
+	
+	public RotationPair extractPairOfProposed(JobNode job){
+		RotationPair pair_r=null;
+		for(RotationPair pair:this.pairs){
+			if(pair.getProposed_by().id==job.id){
+				pair_r=pair;
+				break;
+			}
+		}
+		return pair_r;
+	}
+	
+	
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+
 	private class RotationNode implements Comparable<RotationNode> {
 
 		public final int node_id;

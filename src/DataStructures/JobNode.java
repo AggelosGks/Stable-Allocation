@@ -155,7 +155,7 @@ public class JobNode extends Node {
 		this.pref_pointer++;
 	}
 
-	public boolean canGetWorse2(Matching match) {
+	public boolean canGetWorse(Matching match) {
 		RotationPair pair = null;
 		boolean can = false;
 		//get all machines that current assinged to match with this job
@@ -166,16 +166,20 @@ public class JobNode extends Node {
 			int index = this.pref.indexOf(machine);// get index on preflist
 			MachineNode next = this.pref.get(index + 1);
 			Application.STEPS_IN_TEXT.add("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
+		
 			if (!next.isDummy()) {
 				double available_amount = extractFeasibleAmount(next, amount);
 				//if machine accept rotation begins
 				if (this.proposeExp_Ell(available_amount, next)) {
 					Application.STEPS_IN_TEXT.add("Machine: " + next.id + " accepts");
+					
 					pair = new RotationPair(machine, next, this, available_amount);
 					Application.STEPS_IN_TEXT.add("Pair: " + pair.toString());
+					
 					RotationStructure rotation = new RotationStructure();
 					JobNode rejected = rotation.addPair(pair, match);
 					Application.STEPS_IN_TEXT.add("Rejected from machine: " + next.id + " is Job: " + rejected.id);
+					
 					while (rotation.isOpen()) {
 						MachineNode first_rejection = rotation.retrieveFirstRejectedMachine();
 						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match, first_rejection);
@@ -183,11 +187,14 @@ public class JobNode extends Node {
 							rotation.close();
 						} else {
 							Application.STEPS_IN_TEXT.add("			Next Pair: " + next_pair.toString());
+							
 							rejected = rotation.addPair(next_pair, match);
 							Application.STEPS_IN_TEXT.add("			REJECTED IS : " + rejected.id);
+							
 							if (rotation.containsNode(rejected.id)) {
 								rotation.close();
 								Application.STEPS_IN_TEXT.add("Queue--------------> " + rotation.revealQueueStatus());
+								
 								if (rotation.existsAandC(rejected)) {
 									can = true;
 									//save llast rotation
@@ -255,6 +262,17 @@ public class JobNode extends Node {
 		return pref_pointer;
 	}
 	
+	public boolean gotMuchWorse(RotationPair pairA, RotationPair pairB){
+		boolean did=false;
+		MachineNode endPairA=pairA.getAdded_to();
+		MachineNode endPairB=pairB.getAdded_to();
+		int indexA=this.pref.indexOf(endPairA);
+		int indexB=this.pref.indexOf(endPairB);
+		if(indexB>indexA){//less preferable for job
+			did=true;
+		}
+		return did;
+	}
 	
 
 }

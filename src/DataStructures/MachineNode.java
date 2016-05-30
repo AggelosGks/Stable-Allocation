@@ -122,6 +122,7 @@ public class MachineNode extends Node {
 
 		HashMap<Node, Double> rejected = new HashMap<Node, Double>();
 		JobNode lp = this.getLeastPrefered();
+		
 		double time = Edge.getEdge(lp, this).getCurrent_time();
 		if (time > amount) {// proposed amount is less than time on arc with lp
 			Application.STEPS_IN_TEXT.add("    Machine: " + this.id + " rejects time from: " + lp.id);
@@ -138,6 +139,7 @@ public class MachineNode extends Node {
 			// least prefered job changes
 			refreshPointerIndex(match, proposed);
 			Application.STEPS_IN_TEXT.add("    Machine: " + this.id + " rejects time from: " + lp.id);
+			
 			Application.STEPS_IN_TEXT.add("	Least prefered job changes to " + this.getLeastPrefered().id);
 		} else {
 			boolean change_index = false;
@@ -264,4 +266,16 @@ public class MachineNode extends Node {
 		}
 	}
 
+	public boolean gotMuchBetter(RotationPair pairA, RotationPair pairB){
+		boolean did=false;
+		JobNode endPairA=pairA.getProposed_by();
+		JobNode endPairB=pairB.getProposed_by();
+		int indexA=this.pref.indexOf(endPairA);
+		int indexB=this.pref.indexOf(endPairB);
+		if(indexB<indexA){//most preferable for machine
+			did=true;
+		}
+		return did;
+	}
+	
 }
