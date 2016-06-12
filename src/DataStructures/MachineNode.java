@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import Computation.Label;
 import MainApp.Application;
 
 import java.util.TreeMap;
@@ -18,7 +19,8 @@ public class MachineNode extends Node {
 	private ArrayList<JobNode> pref;// pref list
 	public final double upper_cap;// capacity
 	private int pref_pointer;
-
+	private ArrayList<Label> label;
+	
 	// constructor
 	public MachineNode(double upper_cap) {
 		super();
@@ -29,8 +31,8 @@ public class MachineNode extends Node {
 			dummy = this;
 		}
 		this.pref = new ArrayList<JobNode>();// initialize pref list
-		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least
-														// prefered choice
+		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least prefered choice
+		this.label=new ArrayList<Label>();
 	}
 
 	public MachineNode(int id, double upper_cap) {
@@ -43,7 +45,7 @@ public class MachineNode extends Node {
 		}
 		this.pref = new ArrayList<JobNode>();// initialize pref list
 		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least
-														// prefered choice
+		this.label=new ArrayList<Label>();												// prefered choice
 	}
 
 	public ArrayList<JobNode> getPref() {
@@ -67,6 +69,13 @@ public class MachineNode extends Node {
 	public void setPref(ArrayList<JobNode> pref) {
 		this.pref = pref;
 	}
+	
+
+	public ArrayList<Label> getLabel() {
+		return label;
+	}
+
+	
 
 	public static MachineNode getDummy() {
 		return dummy;
@@ -276,6 +285,16 @@ public class MachineNode extends Node {
 			did=true;
 		}
 		return did;
+	}
+	
+	public boolean hasOnlyPlus(){
+		boolean has=false;
+		for(Label l : this.label){
+			if(l.getLabel().equals("+")){
+				has=true;
+			}
+		}
+		return has;
 	}
 	
 }

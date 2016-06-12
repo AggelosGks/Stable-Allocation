@@ -1,11 +1,13 @@
 package DataStructures;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 import Algorithms.Instance;
+import Computation.Label;
 import Computation.LinearProgramm;
 import MainApp.Application;
 
@@ -114,8 +116,58 @@ public class RotationStructure {
 				
 			}
 			added.refreshPointerIndex(m, proposed_by);
+			addLabels(m,pair);
 			// abstracted.refreshPointerRotation(m);
 		}
+	}
+	
+	public void addLabels(Matching m,RotationPair pair){
+		addLabelPlus(pair);
+		addLabelNon(pair);
+		addLabelMinus(m,pair);
+	}
+	
+	public void addLabelPlus(RotationPair pair){
+		for(MachineNode m : pair.getProposed_by().getPref()){
+			if(m.id==pair.getAdded_to().id){
+				System.out.println(m.id);
+				m.getLabel().add(new Label(this,"+"));
+			}
+		}
+		
+	}
+	public void addLabelNon(RotationPair pair){
+		for(JobNode j : pair.getExtracted_from().getPref()){
+			if(j.id==pair.getProposed_by().id){
+				j.getLabel().add(new Label(this,"X"));
+			}
+		}
+	}
+	
+	public void addLabelMinus(Matching match,RotationPair pair){
+			MachineNode extracted=pair.getExtracted_from();
+			JobNode terminal=null;
+			JobNode start=pair.getProposed_by();
+			for(RotationPair pairS : this.pairs){
+				if(pair!=pairS){
+					if(pairS.getAdded_to().id==extracted.id){//find the next pair that extracted is added
+						terminal=pairS.getProposed_by();
+					}
+				}
+			}
+			int start_index=extracted.getPref().indexOf(start);
+			int last_index=extracted.getPref().indexOf(terminal);
+			for(int i=start_index-1; i>last_index; i--){
+				JobNode job=extracted.getPref().get(i);
+				if(!match.containsEdge(Edge.getEdge(job,extracted))){
+					for(MachineNode mach : job.getPref()){
+						if(mach.id==extracted.id){
+							mach.getLabel().add(new Label(this,"-"));
+						}
+					}
+				}
+			}
+		
 	}
 
 	public boolean existsAandC(JobNode rejected) {

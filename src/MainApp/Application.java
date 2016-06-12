@@ -14,6 +14,7 @@ import Algorithms.ExposureElliminationAlgorithm;
 import Algorithms.GaleShapley;
 import Algorithms.Instance;
 import Algorithms.PosetGraphAlgorithm;
+import Computation.ComputationalTimes;
 import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
 import DataStructures.JobNode;
@@ -25,7 +26,7 @@ public class Application {
 	public static final ArrayList<String> STEPS_IN_TEXT=new ArrayList<String>();
 	
 	public static void main(String args[]) throws CloneNotSupportedException {
-		execute(5,5,100,5,false);
+		execute(200,200,100,5,false);
 		
 	}
 
@@ -108,19 +109,30 @@ public class Application {
 
 	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
 		Instance i = new Instance(jobs, machines, max_time, min_time);
-		BipartiteGraph graph = i.createReadyInst5();
-		i.testInstanceIntegration();
-		Matching job_optimal = executeShapleyJobOrieented(graph, print);
+		BipartiteGraph graph = i.createReadyInst();//create instance
+		i.testInstanceIntegration();//test
+		ComputationalTimes time=new ComputationalTimes();//init
+		time.setStart(System.nanoTime());
+		Matching job_optimal = executeShapleyJobOrieented(graph, print);//execute job opt
+		time.setShapleyTimeJobs(System.nanoTime()-time.getStart());
 		LinearProgramm.addValuesJopt(job_optimal);
-		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);
+		time.setStart(System.nanoTime());
+		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);//execute mach opt
+		time.setShapleyTimeMachines(System.nanoTime()-time.getStart());
 		i.reSwapInstance();
 		System.out.println(" ");
 		i.testInstanceIntegration();
+		time.setStart(System.nanoTime());
 		job_optimal = executeRotations(job_optimal, print);
+		time.setRotationsTime(System.nanoTime()-time.getStart());
 		testCorrectness(job_optimal, machine_optimal);
 		PrintSteps();
+		time.setStart(System.nanoTime());
+		for(JobNode j : JobNode.getJobs()){
+			j.revealLabels();
+		}
 		PosetGraphAlgorithm poset=new PosetGraphAlgorithm();
-		
+		time.setPosetTime(System.nanoTime()-time.getStart());
 		LinearProgramm.printAllEdgeInfo();
 	}
 

@@ -50,7 +50,6 @@ public class ExposureElliminationAlgorithm {
 			int id=rotations.indexOf(rot)+1;
 			rot.setId(id);
 		}
-		PosetGraphAlgorithm.setRotations_order(this.rotations);
 	}
 
 	/**

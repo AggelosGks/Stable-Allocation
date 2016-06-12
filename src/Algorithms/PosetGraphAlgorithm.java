@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Computation.ComputationUtil;
+import Computation.Label;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Node;
@@ -13,7 +14,7 @@ import DataStructures.RotationStructure;
 
 public class PosetGraphAlgorithm {
 	private final ArrayList<RotationEdge> poset;
-	private static  ArrayList<RotationStructure> rotations_order;
+	
 	
 	public PosetGraphAlgorithm(){
 		this.poset=new ArrayList<RotationEdge>(); 
@@ -28,61 +29,55 @@ public class PosetGraphAlgorithm {
 	
 	
 	public void execute(){
-		for(RotationStructure R: rotations_order){
-			for(RotationStructure r : rotations_order){
-				ArrayList<Node> inter=ComputationUtil.getIntersectionListed(R.getPartitionListed(),r.getPartitionListed());
-				if(ComputationUtil.cleanInsterSection(inter)){
-					ArrayList<MachineNode> machines=ComputationUtil.splitMachines(inter);
-					ArrayList<JobNode> jobs=ComputationUtil.splitJobs(inter);
-					CheckRuleMachines(machines,R,r);
-					CheckRuleJobs(jobs,R,r);
-				}
-			}
-		}
-	}
-	
-	public  void CheckRuleMachines(ArrayList<MachineNode> machines,RotationStructure Ra,RotationStructure Rb){
-		for(MachineNode machine : machines){
-			RotationPair pairA=Ra.extractPairOfAdded(machine);
-			RotationPair pairB=Rb.extractPairOfAdded(machine);
-			if(machine.gotMuchBetter(pairA, pairB)){
-				boolean exists_inversed=false;
-				for(RotationEdge e : poset){
-					if(e.first.equals(Rb)&&e.second.equals(Ra)){
-						exists_inversed=true;
+		ArrayList<Label> source=new ArrayList<Label>();
+		ArrayList<Label> sink=new ArrayList<Label>();
+		for(JobNode job : JobNode.getJobs()){
+			for(MachineNode mach : job.getPref()){
+				if(source.isEmpty()){
+					for(Label l : mach.getLabel()){
+						source.add(l);
+					}
+				}else{
+					boolean found=false;
+					if(mach.getLabel()!=null){
+						for(Label l:mach.getLabel()){
+							sink.add(l);
+							found=true;
+						}
+					}
+					if(found){
+						for(Label L : source){
+							for(Label l : sink){
+								RotationEdge e=new RotationEdge(L.getRotation(),l.getRotation());
+								if(!containsTheEdge(e)){
+									poset.add(e);
+								}
+							}
+						}
+						source.clear();
+						for(Label l : sink){
+							source.add(l);
+						}
+						sink.clear();
 					}
 				}
-				if(!exists_inversed){
-					poset.add(new RotationEdge(Ra,Rb));
-				}
-				
 			}
 		}
 	}
 	
-	public  void CheckRuleJobs(ArrayList<JobNode> jobs,RotationStructure Ra,RotationStructure Rb){
-		for(JobNode job : jobs){
-			RotationPair pairA=Ra.extractPairOfProposed(job);
-			RotationPair pairB=Rb.extractPairOfProposed(job);
-			if(job.gotMuchWorse(pairA, pairB)){
-				boolean exists_inversed=false;
-				for(RotationEdge e : poset){
-					if(e.first.equals(Rb)&&e.second.equals(Ra)){
-						exists_inversed=true;
-					}
-				}
-				if(!exists_inversed){
-					poset.add(new RotationEdge(Ra,Rb));
-				}
+	private boolean containsTheEdge(RotationEdge edge){
+		boolean contains=false;
+		for(RotationEdge e : poset){
+			boolean thesame=e.first.equals(edge.first)&&e.second.equals(edge.second);
+			boolean inversed=e.second.equals(edge.first)&&e.first.equals(edge.second);
+			if(thesame||inversed){
+				contains=true;
+				break;
 			}
 		}
+		return contains;
 	}
-	
-	
-	
-	public static void setRotations_order(ArrayList<RotationStructure> rotations_order) {
-		PosetGraphAlgorithm.rotations_order = rotations_order;
-	}
+
 
 
 

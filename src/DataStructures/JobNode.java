@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import Algorithms.ExposureElliminationAlgorithm;
+import Computation.Label;
 import MainApp.Application;
 
 public class JobNode extends Node {
@@ -16,6 +17,7 @@ public class JobNode extends Node {
 	private int time_consumed;// current amount of time
 	private ArrayList<MachineNode> pref;// list with preferences
 	private int pref_pointer;
+	private ArrayList<Label> label;
 
 	public JobNode(double proc_time) {
 		super();
@@ -28,6 +30,7 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
+		this.label=new ArrayList<Label>();
 	}
 
 	public JobNode(int id, double proc_time) {
@@ -41,11 +44,20 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
+		this.label=new ArrayList<Label>();
 	}
 
 	public ArrayList<MachineNode> getPref() {
 		return pref;
 	}
+
+	
+	
+	public ArrayList<Label> getLabel() {
+		return label;
+	}
+
+
 
 	@Override
 	public String toString() {
@@ -274,5 +286,16 @@ public class JobNode extends Node {
 		return did;
 	}
 	
+	public void revealLabels(){
+		System.out.println("JOB"+this.id);
+		for(MachineNode m : this.pref){
+			if(!m.getLabel().isEmpty()){
+				System.out.println("-----------"+m.id);
+				for(Label l : m.getLabel()){
+					System.out.println("             "+l.getLabel()+l.getRotation().id);
+				}
+			}
+		}
+	}
 
 }
