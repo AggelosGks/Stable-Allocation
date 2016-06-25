@@ -5,8 +5,8 @@ import DataStructures.RotationPair;
 import DataStructures.RotationStructure;
 
 public class Info {
-	private final RotationStructure rotation;
-	private final double distr_amount;
+	public final RotationStructure rotation;
+	public final double distr_amount;
 	
 	public Info(RotationStructure rotation,double distr_amount){
 		this.rotation=rotation;

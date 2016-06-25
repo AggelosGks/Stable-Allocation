@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import DataStructures.JobNode;
 import DataStructures.MachineNode;
 import DataStructures.Node;
-import DataStructures.RotationPair;
-import DataStructures.RotationStructure;
 
 public class ComputationUtil {
 	public static void swapElements(MachineNode m, MachineNode n,ArrayList<MachineNode> list){

@@ -1,6 +1,7 @@
 package DataStructures;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -17,7 +18,7 @@ public class JobNode extends Node {
 	private int time_consumed;// current amount of time
 	private ArrayList<MachineNode> pref;// list with preferences
 	private int pref_pointer;
-	private ArrayList<Label> label;
+	private HashMap<MachineNode,ArrayList<Label>> label;
 
 	public JobNode(double proc_time) {
 		super();
@@ -30,7 +31,7 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
-		this.label=new ArrayList<Label>();
+		this.label=new HashMap<MachineNode,ArrayList<Label>>();
 	}
 
 	public JobNode(int id, double proc_time) {
@@ -44,7 +45,7 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
-		this.label=new ArrayList<Label>();
+		this.label=new HashMap<MachineNode,ArrayList<Label>>();
 	}
 
 	public ArrayList<MachineNode> getPref() {
@@ -53,7 +54,7 @@ public class JobNode extends Node {
 
 	
 	
-	public ArrayList<Label> getLabel() {
+	public HashMap<MachineNode,ArrayList<Label>> getLabel() {
 		return label;
 	}
 
@@ -291,8 +292,10 @@ public class JobNode extends Node {
 		for(MachineNode m : this.pref){
 			if(!m.getLabel().isEmpty()){
 				System.out.println("-----------"+m.id);
-				for(Label l : m.getLabel()){
-					System.out.println("             "+l.getLabel()+l.getRotation().id);
+				if(m.getLabel().get(this)!=null){
+					for(Label l : m.getLabel().get(this)){
+						System.out.println("             "+l.getLabel()+l.getRotation().id);
+					}
 				}
 			}
 		}

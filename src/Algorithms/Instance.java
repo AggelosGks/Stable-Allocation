@@ -41,31 +41,30 @@ public class Instance {
 		return graph;
 	}
 
-	
-	public void saveInstace(){
-		this.jobs=new ArrayList<JobNode>(JobNode.getJobs());
-		this.machines=new ArrayList<MachineNode>(MachineNode.getMachines());
-		this.edges=new TreeMap<Integer, ArrayList<Edge>>(Edge.getJobsMachines());
-		this.dummyJ=JobNode.getDummy();
-		this.dummyM=MachineNode.getDummy();
+	public void saveInstace() {
+		this.jobs = new ArrayList<JobNode>(JobNode.getJobs());
+		this.machines = new ArrayList<MachineNode>(MachineNode.getMachines());
+		this.edges = new TreeMap<Integer, ArrayList<Edge>>(Edge.getJobsMachines());
+		this.dummyJ = JobNode.getDummy();
+		this.dummyM = MachineNode.getDummy();
 	}
-	
-	public void reSwapInstance(){
+
+	public void reSwapInstance() {
 		this.clearInstance();
-		for(JobNode j : jobs){
+		for (JobNode j : jobs) {
 			JobNode.getJobs().add(j);
 		}
-		for(MachineNode j : machines){
+		for (MachineNode j : machines) {
 			MachineNode.getMachines().add(j);
 		}
-		while(!edges.isEmpty()){
-			Entry<Integer, ArrayList<Edge>> entry=edges.pollFirstEntry();
-			Edge.getJobsMachines().put(entry.getKey(),entry.getValue());
+		while (!edges.isEmpty()) {
+			Entry<Integer, ArrayList<Edge>> entry = edges.pollFirstEntry();
+			Edge.getJobsMachines().put(entry.getKey(), entry.getValue());
 		}
 		JobNode.setDummy(dummyJ);
 		MachineNode.setDummy(dummyM);
 	}
-	
+
 	public BipartiteGraph SwapInstance() {
 		ArrayList<JobNode> or_jobs = new ArrayList<JobNode>(JobNode.getJobs());
 		ArrayList<MachineNode> or_machines = new ArrayList<MachineNode>(MachineNode.getMachines());
@@ -120,6 +119,7 @@ public class Instance {
 		graph = new BipartiteGraph();
 		return graph;
 	}
+
 	public BipartiteGraph SwapInstance2() {
 		ArrayList<JobNode> or_jobs = new ArrayList<JobNode>(JobNode.getJobs());
 		ArrayList<MachineNode> or_machines = new ArrayList<MachineNode>(MachineNode.getMachines());
@@ -150,10 +150,10 @@ public class Instance {
 					pref.add(pickMachbyId(id));
 				}
 			}
-			while(pref.size()<7){
+			while (pref.size() < 7) {
 				pref.add(MachineNode.getDummy());
 			}
-			
+
 			job.setPref(pref);
 		}
 		for (int i = 0; i < MachineNode.getMachines().size(); i++) {
@@ -170,7 +170,7 @@ public class Instance {
 					pref.add(pickJobbyId(id));
 				}
 			}
-			while(pref.size()<7){
+			while (pref.size() < 7) {
 				pref.add(JobNode.getDummy());
 			}
 			m.setPref(pref);
@@ -179,7 +179,6 @@ public class Instance {
 		graph = new BipartiteGraph();
 		return graph;
 	}
-
 
 	public static JobNode pickJobbyId(int id) {
 		JobNode r_job = null;
@@ -460,7 +459,6 @@ public class Instance {
 
 	}
 
-	
 	public BipartiteGraph createReadyInst2() {
 		JobNode.createDummyJob();
 		MachineNode.createDummyMachine();
@@ -834,7 +832,7 @@ public class Instance {
 				p.add(MachineNode.getDummy());
 				p.add(MachineNode.getDummy());
 				j.setPref(p);
-			}else if(j.id == 6){
+			} else if (j.id == 6) {
 				ArrayList<MachineNode> p = new ArrayList<MachineNode>();
 				p.add(MachineNode.getMachines().get(4));
 				p.add(MachineNode.getMachines().get(1));
@@ -844,7 +842,7 @@ public class Instance {
 				p.add(MachineNode.getDummy());
 				p.add(MachineNode.getDummy());
 				j.setPref(p);
-			}else {
+			} else {
 				ArrayList<MachineNode> p = new ArrayList<MachineNode>();
 				p.add(MachineNode.getMachines().get(5));
 				p.add(MachineNode.getMachines().get(1));
@@ -898,7 +896,7 @@ public class Instance {
 				p.add(JobNode.getDummy());
 				p.add(JobNode.getDummy());
 				j.setPref(p);
-			} else if (j.id==12){
+			} else if (j.id == 12) {
 				ArrayList<JobNode> p = new ArrayList<JobNode>();
 				p.add(JobNode.getJobs().get(1));
 				p.add(JobNode.getJobs().get(4));
@@ -908,7 +906,7 @@ public class Instance {
 				p.add(JobNode.getDummy());
 				p.add(JobNode.getDummy());
 				j.setPref(p);
-			}else{
+			} else {
 				ArrayList<JobNode> p = new ArrayList<JobNode>();
 				p.add(JobNode.getJobs().get(3));
 				p.add(JobNode.getJobs().get(4));
@@ -924,7 +922,7 @@ public class Instance {
 		return new BipartiteGraph();
 
 	}
-	
+
 	public BipartiteGraph createTextInstance(ArrayList<Integer> values) {
 		HashMap<Node, ArrayList<Integer>> preferences = new HashMap<Node, ArrayList<Integer>>();
 		JobNode.createDummyJob();
@@ -939,7 +937,6 @@ public class Instance {
 		int lines_mach = no_j + 2;
 		int counter = 0;
 		int jobs_created = 0;
-		int machines_created = 0;
 		ArrayList<Integer> data = new ArrayList<Integer>();
 		for (int v : values) {
 			data.add(v);
@@ -961,7 +958,6 @@ public class Instance {
 				}
 			} else {
 				if (counter == lines_mach) {
-					machines_created++;
 					MachineNode mach = new MachineNode(data.get(0), data.get(1));
 					preferences.put(mach, new ArrayList<Integer>());
 					for (int i = 2; i < data.size(); i++) {

@@ -19,7 +19,7 @@ public class MachineNode extends Node {
 	private ArrayList<JobNode> pref;// pref list
 	public final double upper_cap;// capacity
 	private int pref_pointer;
-	private ArrayList<Label> label;
+	private HashMap<JobNode,ArrayList<Label>> label;
 	
 	// constructor
 	public MachineNode(double upper_cap) {
@@ -32,7 +32,7 @@ public class MachineNode extends Node {
 		}
 		this.pref = new ArrayList<JobNode>();// initialize pref list
 		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least prefered choice
-		this.label=new ArrayList<Label>();
+		this.label=new HashMap<JobNode,ArrayList<Label>>();
 	}
 
 	public MachineNode(int id, double upper_cap) {
@@ -45,7 +45,7 @@ public class MachineNode extends Node {
 		}
 		this.pref = new ArrayList<JobNode>();// initialize pref list
 		this.pref_pointer = JobNode.getJobs().size();// pointer starts at least
-		this.label=new ArrayList<Label>();												// prefered choice
+		this.label=new HashMap<JobNode,ArrayList<Label>>();												// prefered choice
 	}
 
 	public ArrayList<JobNode> getPref() {
@@ -71,7 +71,7 @@ public class MachineNode extends Node {
 	}
 	
 
-	public ArrayList<Label> getLabel() {
+	public HashMap<JobNode,ArrayList<Label>> getLabel() {
 		return label;
 	}
 
@@ -287,14 +287,5 @@ public class MachineNode extends Node {
 		return did;
 	}
 	
-	public boolean hasOnlyPlus(){
-		boolean has=false;
-		for(Label l : this.label){
-			if(l.getLabel().equals("+")){
-				has=true;
-			}
-		}
-		return has;
-	}
 	
 }

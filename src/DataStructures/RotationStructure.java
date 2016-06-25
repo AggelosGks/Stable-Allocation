@@ -131,7 +131,10 @@ public class RotationStructure {
 		for(MachineNode m : pair.getProposed_by().getPref()){
 			if(m.id==pair.getAdded_to().id){
 				System.out.println(m.id);
-				m.getLabel().add(new Label(this,"+"));
+				if(m.getLabel().get(pair.getProposed_by())==null){//init first if null
+					m.getLabel().put(pair.getProposed_by(), new ArrayList<Label>());
+				}
+				m.getLabel().get(pair.getProposed_by()).add(new Label(this,"+"));
 			}
 		}
 		
@@ -139,7 +142,10 @@ public class RotationStructure {
 	public void addLabelNon(RotationPair pair){
 		for(JobNode j : pair.getExtracted_from().getPref()){
 			if(j.id==pair.getProposed_by().id){
-				j.getLabel().add(new Label(this,"X"));
+				if(j.getLabel().get(pair.getExtracted_from())==null){
+					j.getLabel().put(pair.getExtracted_from(), new ArrayList<Label>());
+				}
+				j.getLabel().get(pair.getExtracted_from()).add(new Label(this,"X"));
 			}
 		}
 	}
@@ -162,7 +168,10 @@ public class RotationStructure {
 				if(!match.containsEdge(Edge.getEdge(job,extracted))){
 					for(MachineNode mach : job.getPref()){
 						if(mach.id==extracted.id){
-							mach.getLabel().add(new Label(this,"-"));
+							if(mach.getLabel().get(pair.getProposed_by())==null){
+								mach.getLabel().put(pair.getProposed_by(), new ArrayList<Label>());
+							}
+							mach.getLabel().get(pair.getProposed_by()).add(new Label(this,"-"));
 						}
 					}
 				}

@@ -123,7 +123,7 @@ public class Application {
 		System.out.println(" ");
 		i.testInstanceIntegration();
 		time.setStart(System.nanoTime());
-		job_optimal = executeRotations(job_optimal, print);
+		job_optimal = executeRotations(job_optimal, print);//execute rotations
 		time.setRotationsTime(System.nanoTime()-time.getStart());
 		testCorrectness(job_optimal, machine_optimal);
 		PrintSteps();
@@ -132,6 +132,7 @@ public class Application {
 			j.revealLabels();
 		}
 		PosetGraphAlgorithm poset=new PosetGraphAlgorithm();
+		poset.execute();
 		time.setPosetTime(System.nanoTime()-time.getStart());
 		LinearProgramm.printAllEdgeInfo();
 	}

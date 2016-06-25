@@ -8,11 +8,15 @@ public class Edge {
 	// instance fields
 	private MachineNode machine;
 	private JobNode job;
+	public final int id;
 	public final double max_time;
 	private double current_time;
 	private static final TreeMap<Integer, ArrayList<Edge>> jobs_machines = new TreeMap<Integer, ArrayList<Edge>>();
+	private static int share;
 
 	public Edge(JobNode j, MachineNode m) {
+		share++;
+		id=share;
 		this.machine = m;
 		this.job = j;
 		this.max_time = Math.min(m.upper_cap, j.proc_time);// min value of
