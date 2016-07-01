@@ -12,7 +12,7 @@ public class ExposureElliminationAlgorithm {
 	private Matching match;// the matching the algorithm is applied to
 	private ArrayList<RotationStructure> rotations;// list of rotationstructures
 	private static RotationStructure runner;
-
+	public static final ArrayList<RotationStructure> rots=new ArrayList<RotationStructure>();
 	public ExposureElliminationAlgorithm(Matching m) {
 		this.match = m;
 		this.rotations = new ArrayList<RotationStructure>();
@@ -26,19 +26,8 @@ public class ExposureElliminationAlgorithm {
 	public void execute() {
 		//get jobs
 		ArrayList<JobNode> jobs = new ArrayList<JobNode>(JobNode.getJobs());
-		Application.STEPS_IN_TEXT.add("                       ROTATIONS                  ");
-		Application.STEPS_IN_TEXT.add(" ");
 		MachineNode.refreshMachines(match);
 		while (decreaseExists(jobs, this.match)) {
-			System.out.println("--------------------------------------------------------------");
-			Application.STEPS_IN_TEXT.add("-------------------------------------------------------------------");
-			Application.STEPS_IN_TEXT.add(runner.toString());
-			System.out.println("--------------------------------------------------------------");
-			Application.STEPS_IN_TEXT.add("-------------------------------------------------------------------");
-			System.out.println(" ");
-			Application.STEPS_IN_TEXT.add(" ");
-			System.out.println(" ");
-			Application.STEPS_IN_TEXT.add(" ");
 			runner.elliminateStructure(match);
 			rotations.add(runner);
 			runner = null;
@@ -46,9 +35,11 @@ public class ExposureElliminationAlgorithm {
 				mach.refreshPointerRotation(match);
 			}
 		}
+		System.out.println("Rotations: "+rotations.size());
 		for(RotationStructure rot : rotations){
 			int id=rotations.indexOf(rot)+1;
 			rot.setId(id);
+			rots.add(rot);
 		}
 	}
 

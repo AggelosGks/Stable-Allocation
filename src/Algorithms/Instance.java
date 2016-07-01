@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
+import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
 import DataStructures.Edge;
 import DataStructures.JobNode;
@@ -202,13 +203,14 @@ public class Instance {
 		return r_machine;
 	}
 
-	public void clearInstance() {
+	public static void clearInstance() {
 		JobNode.getJobs().clear();
 		MachineNode.getMachines().clear();
 		Edge.getJobsMachines().clear();
 		JobNode.setDummy(null);
 		MachineNode.setDummy(null);
 		Node.setShare(0);
+		LinearProgramm.clear();
 
 	}
 

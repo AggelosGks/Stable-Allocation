@@ -3,8 +3,6 @@ package Computation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import DataStructures.Edge;
-import DataStructures.JobNode;
-import DataStructures.MachineNode;
 import DataStructures.Matching;
 import DataStructures.RotationStructure;
 
@@ -12,39 +10,12 @@ public class LinearProgramm {
 	private final static HashMap<Edge, ArrayList<Info>> added = new HashMap<Edge, ArrayList<Info>>();
 	private final static HashMap<Edge, ArrayList<Info>> abstracted = new HashMap<Edge, ArrayList<Info>>();
 	private final static HashMap<Edge, Double> jopt_values = new HashMap<Edge, Double>();
-	private final HashMap<Edge, String> info = new HashMap<Edge, String>();
 	private final Matching jopt;
 	private final Matching mopt;
 
 	public LinearProgramm(Matching jopt, Matching mopt) {
-		for (JobNode j : JobNode.getJobs()) {
-			for (MachineNode m : MachineNode.getMachines()) {
-				info.put(Edge.getEdge(j, m), "");
-			}
-		}
 		this.jopt = jopt;
 		this.mopt = mopt;
-	}
-
-	public void execute() {
-		for (Edge e : info.keySet()) {
-			if (jopt.containsEdge(e)) {
-				info.replace(e, Double.toString(jopt_values.get(e)) + " " + "-");
-				for (Info in : abstracted.get(e)) {
-					String last = info.get(e);
-					info.replace(e, last + "- (R" + Integer.toString(in.rotation.id) + "*" + in.distr_amount + ") ");
-				}
-			}
-		}
-		for (Edge e : info.keySet()) {
-			if (mopt.containsEdge(e)) {
-				for (Info in : added.get(e)) {
-					String last = info.get(e);
-					info.replace(e, last + "+ (R" + Integer.toString(in.rotation.id) + "*" + in.distr_amount + ") ");
-				}
-
-			}
-		}
 	}
 
 	public static void initInfoAddition(Edge e) {
@@ -75,6 +46,16 @@ public class LinearProgramm {
 		for (Edge e : m.getEdgesListed()) {
 			jopt_values.put(e, e.getCurrent_time());
 		}
+	}
+	
+	public static void clear(){
+		added.clear();
+		abstracted.clear();
+		jopt_values.clear();
+	}
+
+	public static HashMap<Edge, Double> getJoptValues() {
+		return jopt_values;
 	}
 
 	public static void printAllEdgeInfo() {

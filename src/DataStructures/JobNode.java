@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import Algorithms.ExposureElliminationAlgorithm;
 import Computation.Label;
-import MainApp.Application;
 
 public class JobNode extends Node {
 	private static final ArrayList<JobNode> jobs = new ArrayList<JobNode>();// total
@@ -18,7 +17,7 @@ public class JobNode extends Node {
 	private int time_consumed;// current amount of time
 	private ArrayList<MachineNode> pref;// list with preferences
 	private int pref_pointer;
-	private HashMap<MachineNode,ArrayList<Label>> label;
+	private HashMap<MachineNode, ArrayList<Label>> label;
 
 	public JobNode(double proc_time) {
 		super();
@@ -31,7 +30,7 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
-		this.label=new HashMap<MachineNode,ArrayList<Label>>();
+		this.label = new HashMap<MachineNode, ArrayList<Label>>();
 	}
 
 	public JobNode(int id, double proc_time) {
@@ -45,20 +44,16 @@ public class JobNode extends Node {
 			dummy = this;
 		}
 		this.pref_pointer = 0;// pointer start at first choice
-		this.label=new HashMap<MachineNode,ArrayList<Label>>();
+		this.label = new HashMap<MachineNode, ArrayList<Label>>();
 	}
 
 	public ArrayList<MachineNode> getPref() {
 		return pref;
 	}
 
-	
-	
-	public HashMap<MachineNode,ArrayList<Label>> getLabel() {
+	public HashMap<MachineNode, ArrayList<Label>> getLabel() {
 		return label;
 	}
-
-
 
 	@Override
 	public String toString() {
@@ -171,46 +166,33 @@ public class JobNode extends Node {
 	public boolean canGetWorse(Matching match) {
 		RotationPair pair = null;
 		boolean can = false;
-		//get all machines that current assinged to match with this job
+		// get all machines that current assinged to match with this job
 		ArrayList<MachineNode> machines = this.getListAssignedtoMatch(match);
 		for (MachineNode machine : machines) {// iterate machines
-			//get time on edge
+			// get time on edge
 			double amount = Edge.getEdge(this, machine).getCurrent_time();
 			int index = this.pref.indexOf(machine);// get index on preflist
 			MachineNode next = this.pref.get(index + 1);
-			Application.STEPS_IN_TEXT.add("Job: " + this.id + " proposes to machine: " + next.id + " amount: " + amount+" previous "+machine.id);
-		
 			if (!next.isDummy()) {
 				double available_amount = extractFeasibleAmount(next, amount);
-				//if machine accept rotation begins
+				// if machine accept rotation begins
 				if (this.proposeExp_Ell(available_amount, next)) {
-					Application.STEPS_IN_TEXT.add("Machine: " + next.id + " accepts");
-					
 					pair = new RotationPair(machine, next, this, available_amount);
-					Application.STEPS_IN_TEXT.add("Pair: " + pair.toString());
-					
 					RotationStructure rotation = new RotationStructure();
 					JobNode rejected = rotation.addPair(pair, match);
-					Application.STEPS_IN_TEXT.add("Rejected from machine: " + next.id + " is Job: " + rejected.id);
-					
 					while (rotation.isOpen()) {
 						MachineNode first_rejection = rotation.retrieveFirstRejectedMachine();
-						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),match, first_rejection);
+						RotationPair next_pair = rejected.extractNextPair(rotation.retrieveLastDistributedAmount(),
+								match, first_rejection);
 						if (next_pair == null) {
 							rotation.close();
 						} else {
-							Application.STEPS_IN_TEXT.add("			Next Pair: " + next_pair.toString());
-							
 							rejected = rotation.addPair(next_pair, match);
-							Application.STEPS_IN_TEXT.add("			REJECTED IS : " + rejected.id);
-							
 							if (rotation.containsNode(rejected.id)) {
 								rotation.close();
-								Application.STEPS_IN_TEXT.add("Queue--------------> " + rotation.revealQueueStatus());
-								
 								if (rotation.existsAandC(rejected)) {
 									can = true;
-									//save llast rotation
+									// save llast rotation
 									ExposureElliminationAlgorithm.setRunner(rotation);
 								}
 							}
@@ -274,31 +256,17 @@ public class JobNode extends Node {
 	public int getPref_pointer() {
 		return pref_pointer;
 	}
-	
-	public boolean gotMuchWorse(RotationPair pairA, RotationPair pairB){
-		boolean did=false;
-		MachineNode endPairA=pairA.getAdded_to();
-		MachineNode endPairB=pairB.getAdded_to();
-		int indexA=this.pref.indexOf(endPairA);
-		int indexB=this.pref.indexOf(endPairB);
-		if(indexB>indexA){//less preferable for job
-			did=true;
+
+	public boolean gotMuchWorse(RotationPair pairA, RotationPair pairB) {
+		boolean did = false;
+		MachineNode endPairA = pairA.getAdded_to();
+		MachineNode endPairB = pairB.getAdded_to();
+		int indexA = this.pref.indexOf(endPairA);
+		int indexB = this.pref.indexOf(endPairB);
+		if (indexB > indexA) {// less preferable for job
+			did = true;
 		}
 		return did;
-	}
-	
-	public void revealLabels(){
-		System.out.println("JOB"+this.id);
-		for(MachineNode m : this.pref){
-			if(!m.getLabel().isEmpty()){
-				System.out.println("-----------"+m.id);
-				if(m.getLabel().get(this)!=null){
-					for(Label l : m.getLabel().get(this)){
-						System.out.println("             "+l.getLabel()+l.getRotation().id);
-					}
-				}
-			}
-		}
 	}
 
 }

@@ -9,7 +9,6 @@ import java.util.PriorityQueue;
 import Algorithms.Instance;
 import Computation.Label;
 import Computation.LinearProgramm;
-import MainApp.Application;
 
 //Each rotation structure instance actually implements a full rotation exposure and ellimination.
 //It contains a list of RotationPairs and a priorityqueue that manipulates the termination criteria.
@@ -130,7 +129,6 @@ public class RotationStructure {
 	public void addLabelPlus(RotationPair pair){
 		for(MachineNode m : pair.getProposed_by().getPref()){
 			if(m.id==pair.getAdded_to().id){
-				System.out.println(m.id);
 				if(m.getLabel().get(pair.getProposed_by())==null){//init first if null
 					m.getLabel().put(pair.getProposed_by(), new ArrayList<Label>());
 				}
@@ -271,7 +269,6 @@ public class RotationStructure {
 		String x = "";
 		for (RotationPair pair : this.pairs) {
 			System.out.println(pair.toString());
-			Application.STEPS_IN_TEXT.add(pair.toString());
 		}
 		return x;
 	}

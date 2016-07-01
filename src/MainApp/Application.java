@@ -8,13 +8,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import Algorithms.ExposureElliminationAlgorithm;
 import Algorithms.GaleShapley;
 import Algorithms.Instance;
 import Algorithms.PosetGraphAlgorithm;
 import Computation.ComputationalTimes;
+import Computation.CsvCreation;
 import Computation.LinearProgramm;
 import DataStructures.BipartiteGraph;
 import DataStructures.JobNode;
@@ -22,8 +21,6 @@ import DataStructures.MachineNode;
 import DataStructures.Matching;
 
 public class Application {
-	
-	public static final ArrayList<String> STEPS_IN_TEXT=new ArrayList<String>();
 	
 	public static void main(String args[]) throws CloneNotSupportedException {
 		execute(200,200,100,5,false);
@@ -62,7 +59,7 @@ public class Application {
 		return values;
 	}
 
-	public static void writeInstance() {
+	public static void writeInstance(String filename) {
 		ArrayList<Integer> values = new ArrayList<Integer>();
 		values.add(JobNode.getJobs().size());
 		values.add(MachineNode.getMachines().size());
@@ -87,7 +84,7 @@ public class Application {
 
 		try {
 			File file = new File(
-					"C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\instance5.txt");
+					"C:\\Users\\aggelos\\Desktop\\Aggelos\\Eclipse\\StableAllocations\\Instances\\"+filename.substring(0, filename.length()-3)+"txt");
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
@@ -108,65 +105,57 @@ public class Application {
 	}
 
 	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
-		Instance i = new Instance(jobs, machines, max_time, min_time);
-		BipartiteGraph graph = i.createReadyInst();//create instance
-		i.testInstanceIntegration();//test
-		ComputationalTimes time=new ComputationalTimes();//init
-		time.setStart(System.nanoTime());
-		Matching job_optimal = executeShapleyJobOrieented(graph, print);//execute job opt
-		time.setShapleyTimeJobs(System.nanoTime()-time.getStart());
-		LinearProgramm.addValuesJopt(job_optimal);
-		time.setStart(System.nanoTime());
-		Matching machine_optimal = executeShapleyMachinesOrieented(i, print);//execute mach opt
-		time.setShapleyTimeMachines(System.nanoTime()-time.getStart());
-		i.reSwapInstance();
-		System.out.println(" ");
-		i.testInstanceIntegration();
-		time.setStart(System.nanoTime());
-		job_optimal = executeRotations(job_optimal, print);//execute rotations
-		time.setRotationsTime(System.nanoTime()-time.getStart());
-		testCorrectness(job_optimal, machine_optimal);
-		PrintSteps();
-		time.setStart(System.nanoTime());
-		for(JobNode j : JobNode.getJobs()){
-			j.revealLabels();
+		for(int instances=0; instances<4; instances++){
+			Instance i = new Instance(200, 200, 50, 400);
+			BipartiteGraph graph = i.createInstance();//create instance
+			//i.testInstanceIntegration();//test
+			ComputationalTimes time=new ComputationalTimes();//init
+			time.setStart(System.nanoTime());
+			Matching job_optimal = executeShapleyJobOrieented(graph, print);//execute job opt
+			time.setShapleyTimeJobs(System.nanoTime()-time.getStart());
+			LinearProgramm.addValuesJopt(job_optimal);
+			time.setStart(System.nanoTime());
+			Matching machine_optimal = executeShapleyMachinesOrieented(i, print);//execute mach opt
+			time.setShapleyTimeMachines(System.nanoTime()-time.getStart());
+			i.reSwapInstance();
+			//i.testInstanceIntegration();
+			time.setStart(System.nanoTime());
+			job_optimal = executeRotations(job_optimal, print);//execute rotations
+			time.setRotationsTime(System.nanoTime()-time.getStart());
+			testCorrectness(job_optimal, machine_optimal);
+			PosetGraphAlgorithm poset=new PosetGraphAlgorithm();
+			time.setStart(System.nanoTime());
+			poset.execute();
+			time.setPosetTime(System.nanoTime()-time.getStart());
+			int nj=JobNode.getJobs().size();
+			int nm=MachineNode.getMachines().size();
+			int nr=ExposureElliminationAlgorithm.rots.size();
+			CsvCreation csv=new CsvCreation(nj,nm,nr,poset.getPoset(),time);
+			writeInstance(csv.name);
+			Instance.clearInstance();
 		}
-		PosetGraphAlgorithm poset=new PosetGraphAlgorithm();
-		poset.execute();
-		time.setPosetTime(System.nanoTime()-time.getStart());
-		LinearProgramm.printAllEdgeInfo();
 	}
 
+	
+	
 	public static Matching executeShapleyJobOrieented(BipartiteGraph graph, boolean print) {
 		GaleShapley algorithm = new GaleShapley(graph);
 		algorithm.execute();
-		System.out.println(" ");
-		System.out.println("---------------JOB OPTIMAL SHAPLEY----------------------");
-		algorithm.getMatch().printMatching();
-		System.out.println("--------------------------------------------------------");
-		System.out.println("                       ");
-		System.out.println("                       ");
 		return algorithm.getMatch();
 	}
+	
+	
 
 	private static Matching executeRotations(Matching job_optimal, boolean print) {
 		ExposureElliminationAlgorithm exp = new ExposureElliminationAlgorithm(job_optimal);
-
 		exp.execute();
-
-		System.out.println("---------------MACHINE OPTIMAL ROTATIONS-----------------");
-		exp.getMatch().printMatching();
-		System.out.println("---------------------------------------------------------");
-		System.out.println("                       ");
-		System.out.println("                       ");
 		return exp.getMatch();
 	}
 
 	private static Matching executeShapleyMachinesOrieented(Instance instance, boolean print) {
-		GaleShapley inversed = new GaleShapley(instance.SwapInstance2());
-		instance.testInstanceIntegration();
+		GaleShapley inversed = new GaleShapley(instance.SwapInstance());
+		//instance.testInstanceIntegration();
 		inversed.execute();
-		inversed.getMatch().printMatchingSwaped();
 		return inversed.getMatch();
 	}
 
@@ -174,22 +163,11 @@ public class Application {
 		if (machine_optimal.areEqual(job_optimal)) {
 			System.out.println("Yes");
 		} else {
-			writeInstance();
-			System.out.println("No");
+			System.out.println("No*************************");
 		}
 	}
 	
-	private static void PrintSteps(){
-		System.out.println("Print Steps?");
-		Scanner input=new Scanner(System.in);
-		String in=input.nextLine();
-		if(in.equals("")){
-			for(String line : STEPS_IN_TEXT){
-				System.out.println(line);
-			}
-		}
-		input.close();
-	}
+	
 	
 	
 }

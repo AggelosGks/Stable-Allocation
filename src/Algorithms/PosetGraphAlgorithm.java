@@ -50,11 +50,10 @@ public class PosetGraphAlgorithm {
 				}
 			}
 		}
-		clearDuplic();
-		reveal();
+		clearDuplicReverse();
 	}
 
-	private void clearDuplic() {
+	private void clearDuplicReverse() {
 		ArrayList<RotationEdge> del = new ArrayList<RotationEdge>();
 		for (RotationEdge e : poset) {
 			if (e.first.id == e.second.id) {
@@ -64,6 +63,7 @@ public class PosetGraphAlgorithm {
 		for (RotationEdge e : del) {
 			poset.remove(e);
 		}
+		
 		
 	}
 	
@@ -87,8 +87,16 @@ public class PosetGraphAlgorithm {
 		}
 		return contains;
 	}
+	
+	
 
-	private class RotationEdge {
+	public ArrayList<RotationEdge> getPoset() {
+		return poset;
+	}
+
+
+
+	public class RotationEdge {
 
 		public final RotationStructure first;
 		public final RotationStructure second;
