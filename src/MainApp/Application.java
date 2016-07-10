@@ -105,10 +105,10 @@ public class Application {
 	}
 
 	private static void execute(int jobs, int machines, int max_time, int min_time, boolean print) {
-		for(int instances=0; instances<4; instances++){
+		
 			Instance i = new Instance(200, 200, 50, 400);
 			BipartiteGraph graph = i.createInstance();//create instance
-			//i.testInstanceIntegration();//test
+			i.testInstanceIntegration();//test
 			ComputationalTimes time=new ComputationalTimes();//init
 			time.setStart(System.nanoTime());
 			Matching job_optimal = executeShapleyJobOrieented(graph, print);//execute job opt
@@ -133,7 +133,7 @@ public class Application {
 			CsvCreation csv=new CsvCreation(nj,nm,nr,poset.getPoset(),time);
 			writeInstance(csv.name);
 			Instance.clearInstance();
-		}
+		
 	}
 
 	
